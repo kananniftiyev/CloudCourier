@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: #121212 !important;
+}
+
+.x-logo {
+  color: #058c42;
+}
+
+.button-signup {
+  background-color: #058c42 !important;
+  color: #f8ffe5 !important;
+}
+
+.button-signup:hover {
+  background-color: #047537 !important;
+}
+
+.button-login {
+  color: #f8ffe5 !important;
+}
+
+.logo-main {
+  color: #f8ffe5 !important;
+}
