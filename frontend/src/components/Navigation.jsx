@@ -1,6 +1,6 @@
-import { Text } from "@chakra-ui/react";
-import { Button, ButtonGroup } from "@chakra-ui/react";
-import { Link } from "@chakra-ui/react";
+import Typography from "@mui/joy/Typography";
+import Button from "@mui/joy/Button";
+import Link from "@mui/joy/Link";
 
 function Navigation() {
   return (
@@ -8,16 +8,16 @@ function Navigation() {
       <div className="md:container md:mx-auto mt-4">
         <div className="flex justify-between">
           <div className="logo">
-            <Text className="logo-main" as="b" fontSize="2xl">
+            <Typography className="logo-main" level="h3">
               CloudShare<span className="x-logo">X</span>
-            </Text>
+            </Typography>
           </div>
           <div className="auth flex justify-between gap-6 items-center">
-            <Link as="b" className="button-login">
-              Login
+            <Link underline="none" className="button-login">
+              Sign in
             </Link>
-            <Button className="button-signup" size="md">
-              Sign Up
+            <Button className="button-signup" size="lg">
+              Create a Account
             </Button>
           </div>
         </div>

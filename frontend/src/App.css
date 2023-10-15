@@ -3,7 +3,12 @@
 @tailwind utilities;
 
 body {
-  background-color: #121212 !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 .x-logo {
@@ -12,7 +17,6 @@ body {
 
 .button-signup {
   background-color: #058c42 !important;
-  color: #f8ffe5 !important;
 }
 
 .button-signup:hover {
@@ -20,9 +24,48 @@ body {
 }
 
 .button-login {
-  color: #f8ffe5 !important;
+  color: #121212 !important;
 }
 
 .logo-main {
-  color: #f8ffe5 !important;
+  color: #121212 !important;
+}
+
+footer {
+  color: #121212; /* Text color of the footer */
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.left-foot {
+  color: #f8ffe5b5;
+}
+
+.right-foot {
+  color: #f8ffe5b5;
+}
+
+.back {
+  background-color: #fafafa !important ;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.or {
+  font-weight: 700;
+  color: #0000001b;
+  font-size: 20px;
+}
+
+label {
+  background-color: #3772ff;
+  padding: 8px 32px;
+  border-radius: 6px;
+  color: white;
+}
+label:hover {
+  background-color: #3165e0;
 }

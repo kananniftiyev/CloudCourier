@@ -1,16 +1,19 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Navigation from './components/Navigation'
+import "./App.css";
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+import Hero from "./components/Hero";
+import FileDrop from "./components/FileDrop";
+import "@fontsource/inter";
 
 function App() {
-
   return (
     <>
-     <Navigation/>
+      <Navigation />
+      <Hero />
+      <FileDrop />
+      <Footer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
