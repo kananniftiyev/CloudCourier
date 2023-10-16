@@ -10,7 +10,7 @@ function FileDrop() {
           <span className="or">---Or---</span>
           <input className="input-file" type="file" id="file" />
           <label className="" htmlFor="file">
-            Upload
+            Browse Disk
           </label>
         </label>
       </div>

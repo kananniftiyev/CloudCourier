@@ -12,15 +12,15 @@ body {
 }
 
 .x-logo {
-  color: #058c42;
+  color: #50a8ea;
 }
 
 .button-signup {
-  background-color: #058c42 !important;
+  background-color: #50a8ea !important;
 }
 
 .button-signup:hover {
-  background-color: #047537 !important;
+  background-color: #4a9ad7 !important;
 }
 
 .button-login {
@@ -28,7 +28,7 @@ body {
 }
 
 .logo-main {
-  color: #121212 !important;
+  color: #2c3246 !important;
 }
 
 footer {
@@ -68,4 +68,9 @@ label {
 }
 label:hover {
   background-color: #3165e0;
+}
+
+.MuiDrawer-content {
+  border-radius: 40px 0 0 40px !important;
+  padding: 32px;
 }
