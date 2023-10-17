@@ -3,6 +3,9 @@ import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import Link from "@mui/joy/Link";
 import Drawer from "@mui/joy/Drawer";
+import Input from "@mui/joy/Input";
+import { BsShieldLockFill } from "react-icons/bs";
+import Checkbox from "@mui/joy/Checkbox";
 
 function Navigation() {
   const [open, setOpen] = React.useState(false);
@@ -48,12 +51,30 @@ function Navigation() {
               Sign in
             </Link>
             <Drawer
-              className="drawer-sign"
+              className="drawer-sign flex flex-col"
               open={openSign}
               onClose={toggleDrawerSignIn(false)}
               anchor="right"
             >
-              <Typography>llll</Typography>
+              <div className="flex flex-row justify-between mb-10">
+                <Typography level="h3">Login</Typography>
+                <div className="flex flex-row items-center gap-1">
+                  <BsShieldLockFill className="lock" />
+                  <Typography level="body-sm">
+                    Accounts are secure and encrypted
+                  </Typography>
+                </div>
+              </div>
+
+              <Input className="mb-4" placeholder="Email" />
+              <Input type="password" placeholder="Password" />
+              <div className="flex flex-row justify-between mt-8 mb-6">
+                <Checkbox label="Remember me" />
+                <Link>Forgot your password?</Link>
+              </div>
+              <Button size="lg" disabled>
+                Login
+              </Button>
             </Drawer>
             <Button
               className="button-signup"
@@ -68,7 +89,26 @@ function Navigation() {
               onClose={toggleDrawer(false)}
               anchor="right"
             >
-              <Typography>ASDD</Typography>
+              <div className="flex flex-row justify-between mb-10">
+                <Typography level="h3">Sign up</Typography>
+                <div className="flex flex-row items-center gap-1">
+                  <BsShieldLockFill className="lock" />
+                  <Typography level="body-sm">
+                    Accounts are secure and encrypted
+                  </Typography>
+                </div>
+              </div>
+              <Input className="mb-4" placeholder="Username" />
+              <Input className="mb-4" placeholder="Email" />
+              <Input className="mb-4" type="password" placeholder="Password" />
+              <Input
+                className="mb-8"
+                type="password"
+                placeholder="Password Again"
+              />
+              <Button size="lg" disabled>
+                Sign up
+              </Button>
             </Drawer>
           </div>
         </div>

@@ -24,11 +24,11 @@ body {
 }
 
 .button-login {
-  color: #121212 !important;
+  color: white !important;
 }
 
 .logo-main {
-  color: #2c3246 !important;
+  color: white !important;
 }
 
 footer {
@@ -60,17 +60,62 @@ input[type="file"] {
   font-size: 20px;
 }
 
-label {
-  background-color: #3772ff;
-  padding: 8px 32px;
-  border-radius: 6px;
-  color: white;
-}
-label:hover {
-  background-color: #3165e0;
-}
-
 .MuiDrawer-content {
   border-radius: 40px 0 0 40px !important;
+  padding: 0 56px 0 56px;
+  padding-top: 5%;
+}
+
+.split {
+  display: flex;
+  flex-direction: row;
+}
+
+body {
+  background-color: rgb(20, 26, 31);
+}
+
+.left {
+  background-color: white;
   padding: 32px;
+  border-radius: 6px;
+}
+
+.asd {
+  color: #717991 !important;
+  width: 60% !important;
+}
+
+.sheet {
+  background-color: #f8fbff;
+  border-radius: 6px;
+  border: 1px solid #dbe4f2;
+  flex: 0 1 auto !important;
+}
+
+.right-sheet {
+  margin-top: 6px;
+}
+
+.sss {
+  color: #717991 !important;
+}
+
+.MuiInput-root {
+  padding: 8px 16px !important;
+}
+
+.a {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.lock {
+  width: 24px;
+  height: auto;
+  color: #4a9ad7;
+}
+
+* {
+  font-family: "Roboto Mono Variable", sans-serif !important;
 }
