@@ -1,42 +1,121 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.x-logo {
+  color: #50a8ea;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.button-signup {
+  background-color: #50a8ea !important;
 }
 
-.card {
-  padding: 2em;
+.button-signup:hover {
+  background-color: #4a9ad7 !important;
 }
 
-.read-the-docs {
-  color: #888;
+.button-login {
+  color: white !important;
+}
+
+.logo-main {
+  color: white !important;
+}
+
+footer {
+  color: #121212; /* Text color of the footer */
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.left-foot {
+  color: #f8ffe5b5;
+}
+
+.right-foot {
+  color: #f8ffe5b5;
+}
+
+.back {
+  background-color: #fafafa !important ;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.or {
+  font-weight: 700;
+  color: #0000001b;
+  font-size: 20px;
+}
+
+.MuiDrawer-content {
+  border-radius: 40px 0 0 40px !important;
+  padding: 0 56px 0 56px;
+  padding-top: 5%;
+}
+
+.split {
+  display: flex;
+  flex-direction: row;
+}
+
+body {
+  background-color: rgb(20, 26, 31);
+}
+
+.left {
+  background-color: white;
+  padding: 32px;
+  border-radius: 6px;
+}
+
+.asd {
+  color: #717991 !important;
+  width: 60% !important;
+}
+
+.sheet {
+  background-color: #f8fbff;
+  border-radius: 6px;
+  border: 1px solid #dbe4f2;
+  flex: 0 1 auto !important;
+}
+
+.right-sheet {
+  margin-top: 6px;
+}
+
+.sss {
+  color: #717991 !important;
+}
+
+.MuiInput-root {
+  padding: 8px 16px !important;
+}
+
+.a {
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.lock {
+  width: 24px;
+  height: auto;
+  color: #4a9ad7;
+}
+
+* {
+  font-family: "Roboto Mono Variable", sans-serif !important;
 }
