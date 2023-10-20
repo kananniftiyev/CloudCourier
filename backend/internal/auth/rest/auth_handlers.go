@@ -13,6 +13,7 @@ import (
 )
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	userRepo := repository.NewUserRepository()
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
@@ -28,7 +29,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("Could not hash The password")
 	}
-	err = repository.CreateNewUser(registerReq.Username, registerReq.Email, hashedPassword)
+
+	err = userRepo.CreateUser(registerReq.Username, registerReq.Email, hashedPassword)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	if err != nil {
 		log.Println(err)
 
@@ -42,6 +48,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	userRepo := repository.NewUserRepository()
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -53,7 +60,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	hashedPassword, err := repository.LoginUserCheck(loginReq.Email)
+	hashedPassword, err := userRepo.LoginUserCheck(loginReq.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
@@ -63,7 +70,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Email or Password is wrong", http.StatusConflict)
 		return
 	}
-	logedUser, err := repository.GetUserWithEmail(loginReq.Email)
+	logedUser, err := userRepo.GetUserWithEmail(loginReq.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return

@@ -6,6 +6,12 @@ import (
 	"gorm.io/gorm"
 )
 
+func init() {
+	db := ConnectDatabase()
+	db.AutoMigrate(&models.User{}, &models.Files{})
+	db.Commit()
+}
+
 func ConnectDatabase() *gorm.DB {
 	dsn := "user=postgres password=kanan123 dbname=CloudShareX host=localhost port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -13,10 +19,4 @@ func ConnectDatabase() *gorm.DB {
 		panic("Failed to Connect to Database")
 	}
 	return db
-}
-
-func init() {
-	db := ConnectDatabase()
-	db.AutoMigrate(&models.User{}, &models.Files{})
-	db.Commit()
 }

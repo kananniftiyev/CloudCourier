@@ -4,53 +4,61 @@ import (
 	"backend/internal/database"
 	"backend/internal/database/models"
 	"errors"
+	"gorm.io/gorm"
 	"time"
 )
 
-func CreateNewUser(username, email, hashedPassword string) error {
-	db := database.ConnectDatabase()
+var (
+	ErrUserNotFound      = errors.New("User not found")
+	ErrUserAlreadyExists = errors.New("User already exists")
+	ErrDatabaseOperation = errors.New("Database operation failed")
+)
 
-	err := FindUser(email, username)
-	if err != nil {
-		return err
+type UserRepository struct {
+	db *gorm.DB
+}
+
+func NewUserRepository() *UserRepository {
+	return &UserRepository{
+		db: database.ConnectDatabase(),
+	}
+}
+
+func (ur *UserRepository) CreateUser(username, email, hashedPassword string) error {
+	if ur.userExists(email, username) {
+		return ErrUserAlreadyExists
 	}
 
 	newUser := models.User{Username: username, Email: email, PasswordHash: hashedPassword, RegistrationDate: time.Now()}
-	if err := db.Create(&newUser).Error; err != nil {
-		return err
+	if err := ur.db.Create(&newUser).Error; err != nil {
+		return ErrDatabaseOperation
 	}
 	return nil
 }
 
-func FindUser(email, username string) error {
-	db := database.ConnectDatabase()
-
+func (ur *UserRepository) LoginUserCheck(email string) (string, error) {
 	var existingUser models.User
-	db.Where("email = ? OR username = ?", email, username).First(&existingUser)
-	if existingUser.ID != 0 {
-		return errors.New("User with this email or username already exists")
-	}
-	return nil
-}
-
-func LoginUserCheck(email string) (string, error) {
-	db := database.ConnectDatabase()
-
-	var existingUser models.User
-	db.Where("email = ?", email).First(&existingUser)
+	ur.db.Where("email = ?", email).First(&existingUser)
 	if existingUser.ID == 0 {
-		return "", errors.New("User Does Not Exist")
+		return "", ErrUserNotFound
 	}
 	return existingUser.PasswordHash, nil
 }
 
-func GetUserWithEmail(email string) (models.User, error) {
-	db := database.ConnectDatabase()
-
+func (ur *UserRepository) GetUserWithEmail(email string) (models.User, error) {
 	var existingUser models.User
-	db.Where(db.Where("email = ?", email).First(&existingUser))
+	ur.db.Where(ur.db.Where("email = ?", email).First(&existingUser))
 	if existingUser.ID == 0 {
-		return models.User{}, errors.New("User Does Not Exist")
+		return models.User{}, ErrUserNotFound
 	}
 	return existingUser, nil
+}
+
+func (ur *UserRepository) userExists(email, username string) bool {
+	var user models.User
+	err := ur.db.Where("email = ? OR username = ?", email, username).First(&user)
+	if err != nil {
+		return true
+	}
+	return false
 }
