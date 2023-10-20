@@ -5,3 +5,7 @@ type RegisterRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type Error struct {
+	ErrorN string `json:"error"`
+}

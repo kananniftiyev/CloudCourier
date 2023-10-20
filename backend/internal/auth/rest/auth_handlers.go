@@ -25,7 +25,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal("Could not hash The password")
 	}
-	repository.CreateNewUser(registerReq.Username, registerReq.Email, hashedPassword)
+	err = repository.CreateNewUser(registerReq.Username, registerReq.Email, hashedPassword)
+	if err != nil {
+		log.Println(err)
+
+		newError := Error{ErrorN: err.Error()}
+		errorJson, _ := json.Marshal(newError)
+		http.Error(w, "", http.StatusConflict)
+		w.Write(errorJson)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
