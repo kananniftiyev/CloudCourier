@@ -56,7 +56,7 @@ func (ur *UserRepository) GetUserWithEmail(email string) (models.User, error) {
 
 func (ur *UserRepository) userExists(email, username string) bool {
 	var user models.User
-	err := ur.db.Where("email = ? OR username = ?", email, username).First(&user)
+	err := ur.db.Where("email = ? AND username = ?", email, username).First(&user)
 	if err != nil {
 		return true
 	}

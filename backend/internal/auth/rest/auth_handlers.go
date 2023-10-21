@@ -4,11 +4,10 @@ import (
 	"backend/internal/auth"
 	"backend/internal/database/repository"
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -48,6 +47,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	const SECRET_KEY = "secret"
 	userRepo := repository.NewUserRepository()
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -70,26 +70,18 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Email or Password is wrong", http.StatusConflict)
 		return
 	}
-	logedUser, err := userRepo.GetUserWithEmail(loginReq.Email)
+	loggedUser, err := userRepo.GetUserWithEmail(loginReq.Email)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	claims := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.StandardClaims{
-		Issuer:    strconv.Itoa(int(logedUser.ID)),
-		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
-	})
-
-	tokken, err := claims.SigningString()
-	if err != nil {
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
+	token, err := auth.CreateNewJWT(loggedUser.ID)
+	fmt.Println(token + "a")
 
 	cookie := &http.Cookie{
 		Name:     "jwt",
-		Value:    tokken,
+		Value:    token,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
 	}

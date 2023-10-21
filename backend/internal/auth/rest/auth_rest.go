@@ -11,6 +11,7 @@ func AuthStart() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.CleanPath)
+	r.Use(middleware.SetHeader("Access-Control-Allow-Credentials", "true"))
 
 	InitializeRoutes(r)
 
