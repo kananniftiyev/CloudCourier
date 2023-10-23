@@ -117,5 +117,28 @@ body {
 }
 
 * {
-  font-family: "Roboto Mono Variable", sans-serif !important;
+  font-family: "Source Sans Pro", sans-serif !important;
+}
+
+.right-upload {
+  background-color: white;
+  border-radius: 8px;
+  height: auto;
+}
+
+.bsplus {
+  width: 36px;
+  height: auto;
+}
+
+.add-files {
+  padding: 18px 8px 18px 2px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 2px dashed rgba(69, 75, 133, 0.33);
+}
+
+.add-files:hover {
+  background-color: #eaedf1 !important;
+  cursor: pointer;
 }
