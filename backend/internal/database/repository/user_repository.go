@@ -62,3 +62,10 @@ func (ur *UserRepository) userExists(email, username string) bool {
 	}
 	return false
 }
+
+func (ur *UserRepository) GetUserById(id uint) (models.User, error) {
+	var user models.User
+	ur.db.Where("id = ?", id).First(&user)
+
+	return user, nil
+}

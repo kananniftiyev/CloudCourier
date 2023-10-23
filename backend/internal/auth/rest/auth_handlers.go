@@ -4,15 +4,16 @@ import (
 	"backend/internal/auth"
 	"backend/internal/database/repository"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
 )
 
+var userRepo = repository.NewUserRepository()
+
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	userRepo := repository.NewUserRepository()
+
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
@@ -39,16 +40,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 		newError := Error{ErrorN: err.Error()}
 		errorJson, _ := json.Marshal(newError)
-		http.Error(w, err.Error(), http.StatusConflict)
+		http.Error(w, "", http.StatusConflict)
 		w.Write(errorJson)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusCreated)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	const SECRET_KEY = "secret"
-	userRepo := repository.NewUserRepository()
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -77,7 +76,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := auth.CreateNewJWT(loggedUser.ID)
-	fmt.Println(token + "a")
 
 	cookie := &http.Cookie{
 		Name:     "jwt",
@@ -87,9 +85,44 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
 
-	// Todo: Sent Necessary data to user, and look how to use jwt in this.
+// TODO: Logout
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	cookie := &http.Cookie{Name: "jwt", Value: "", Expires: time.Now().Add(-time.Hour), HttpOnly: true}
+	http.SetCookie(w, cookie)
+	newMessage := Message{"Logged out successfully."}
+	message, err := json.Marshal(newMessage)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	w.Write(message)
+
+}
+
+func UserHandler(w http.ResponseWriter, r *http.Request) {
+	claims, ok := r.Context().Value("claims").(*auth.CustomClaims)
+	if !ok {
+		http.Error(w, "Failed to get user claims", http.StatusUnauthorized)
+		return
+	}
+
+	userID := claims.UserID
+	user, err := userRepo.GetUserById(userID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	reqUser := RequestedUserData{Email: user.Email, Username: user.Username, CreatedAt: user.CreatedAt}
+	userJSON, err := json.Marshal(reqUser)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(userJSON)
 }
