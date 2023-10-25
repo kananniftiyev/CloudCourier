@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"backend/internal/database"
-	"backend/internal/database/models"
+	"backend/internal/auth/database"
+	"backend/internal/auth/database/models"
 	"errors"
 	"gorm.io/gorm"
 	"time"
@@ -56,11 +56,11 @@ func (ur *UserRepository) GetUserWithEmail(email string) (models.User, error) {
 
 func (ur *UserRepository) userExists(email, username string) bool {
 	var user models.User
-	err := ur.db.Where("email = ? AND username = ?", email, username).First(&user)
-	if err != nil {
-		return true
+	ur.db.Where("email = ? OR username = ?", email, username).First(&user)
+	if user.ID == 0 {
+		return false
 	}
-	return false
+	return true
 }
 
 func (ur *UserRepository) GetUserById(id uint) (models.User, error) {

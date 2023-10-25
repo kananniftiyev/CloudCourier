@@ -2,7 +2,7 @@ package rest
 
 import (
 	"backend/internal/auth"
-	"backend/internal/database/repository"
+	"backend/internal/auth/database/repository"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -75,7 +75,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.CreateNewJWT(loggedUser.ID)
+	token, err := auth.CreateNewJWT(loggedUser.ID, loggedUser.Username)
 
 	cookie := &http.Cookie{
 		Name:     "jwt",
@@ -88,8 +88,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
-
-// TODO: Logout
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{Name: "jwt", Value: "", Expires: time.Now().Add(-time.Hour), HttpOnly: true}

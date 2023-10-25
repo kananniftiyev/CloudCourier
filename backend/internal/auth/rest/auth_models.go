@@ -1,6 +1,8 @@
 package rest
 
-import "time"
+import (
+	"time"
+)
 
 type RegisterRequest struct {
 	Username string `json:"username"`
