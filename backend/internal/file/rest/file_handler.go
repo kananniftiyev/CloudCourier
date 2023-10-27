@@ -5,14 +5,15 @@ import (
 	"backend/internal/file/database"
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io"
 	"log"
 	"net/http"
 )
 
-// TODO: Create new folder in storage for every user
 // TODO: Fix this shit
+// TODO: Add Password
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
 	if err != nil {
@@ -81,6 +82,8 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fileUUID := uuid.New()
+
 	fileURL, err := file_upload.GetFileURL("cloudsharex-b8353.appspot.com", userRef+handler.Filename)
 	if err != nil {
 		log.Print(err)
@@ -91,12 +94,13 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create New Mongo Record
 	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
 	newFileRecord := database.File{
-		ID:       primitive.ObjectID{},
-		UserID:   userId,
-		Username: username,
-		FileName: handler.Filename,
-		FilePath: fileURL,
-		Password: "",
+		ID:         primitive.ObjectID{},
+		UserID:     userId,
+		Username:   username,
+		FileName:   handler.Filename,
+		FilePath:   fileURL,
+		SpecialURL: fileUUID,
+		Password:   "",
 	}
 
 	err = fileRepo.Create(context.Background(), &newFileRecord)

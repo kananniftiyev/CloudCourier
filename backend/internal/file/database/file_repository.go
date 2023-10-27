@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -34,4 +35,14 @@ func (r *FileRepository) FindByID(ctx context.Context, id primitive.ObjectID) (*
 func (r *FileRepository) Delete(ctx context.Context, id primitive.ObjectID) error {
 	_, err := r.collection.DeleteOne(ctx, bson.M{"_id": id})
 	return err
+}
+
+func (r *FileRepository) FindUUID(ctx context.Context, uuidx uuid.UUID) (*File, error) {
+	var file File
+	filter := bson.M{"specialurl": uuidx}
+	err := r.collection.FindOne(ctx, filter).Decode(&file)
+	if err != nil {
+		return nil, err
+	}
+	return &file, nil
 }
