@@ -1,7 +1,7 @@
 package rest
 
 import (
-	file_upload "backend/internal/file"
+	"backend/internal/file"
 	"backend/internal/file/database"
 	"context"
 	"fmt"
@@ -9,10 +9,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 )
 
-// TODO: Fix this shit
 // TODO: Add Password
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
@@ -20,6 +20,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
+	password := r.FormValue("password")
 	app, err := file_upload.InitializeFirebase()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -56,7 +57,12 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to retrieve file", http.StatusBadRequest)
 		return
 	}
-	defer file.Close()
+	defer func(file multipart.File) {
+		err := file.Close()
+		if err != nil {
+
+		}
+	}(file)
 
 	// Get a reference to the file in Firebase Storage
 
@@ -100,7 +106,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		FileName:   handler.Filename,
 		FilePath:   fileURL,
 		SpecialURL: fileUUID,
-		Password:   "",
+		Password:   password,
 	}
 
 	err = fileRepo.Create(context.Background(), &newFileRecord)
@@ -110,6 +116,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 

@@ -22,7 +22,7 @@ type CustomClaims struct {
 }
 
 func InitializeFirebase() (*firebase.App, error) {
-	opt := option.WithCredentialsFile("C:\\Users\\kenan\\Documents\\GitHub\\CloudShareX\\backend\\internal\\file\\rest\\cloudsharex-b8353-firebase-adminsdk-rtbmn-c36203b30a.json") // Replace with your Firebase Admin SDK credentials file
+	opt := option.WithCredentialsFile("C:\\Users\\kenan\\Documents\\GitHub\\CloudShareX\\backend\\firebase-x.json") // Replace with your Firebase Admin SDK credentials file
 
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
