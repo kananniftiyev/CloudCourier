@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// TODO: Bug in logout and login. Do not let user to login if they are logged in. Make logout better
 var userRepo = repository.NewUserRepository()
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -82,6 +83,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
+		Domain:   "localhost",
+		Path:     "/",
 	}
 
 	http.SetCookie(w, cookie)
