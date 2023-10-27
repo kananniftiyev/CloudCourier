@@ -15,13 +15,14 @@ const SECRET_KEY = "secret"
 
 type CustomClaims struct {
 	jwt.StandardClaims
-	UserID uint
+	UserID   uint
+	Username string
 
 	// Add other custom claims as needed
 }
 
 func HashPassword(enteredPassword string) (string, error) {
-	cost := 12
+	cost := 14
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(enteredPassword), cost)
 	if err != nil {
 		return "", err
@@ -34,11 +35,10 @@ func VerifyPassword(enteredPassword, hashedPassword string) error {
 	return err
 }
 
-// TODO: Fix this
 func VerifyToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Retrieve the JWT token from the cookie
-		cookie, err := r.Cookie("jwt") // "jwt" is the cookie name, change it to match your setup
+		cookie, err := r.Cookie("jwt")
 		if err != nil {
 			http.Error(w, "No token provided", http.StatusForbidden)
 			return
@@ -72,7 +72,7 @@ func VerifyToken(next http.Handler) http.Handler {
 	})
 }
 
-func CreateNewJWT(ID uint) (string, error) {
+func CreateNewJWT(ID uint, username string) (string, error) {
 	// Convert the SECRET_KEY string to a byte array
 	key := []byte(SECRET_KEY)
 
@@ -81,7 +81,8 @@ func CreateNewJWT(ID uint) (string, error) {
 			Issuer:    strconv.Itoa(int(ID)),
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 		},
-		UserID: ID,
+		UserID:   ID,
+		Username: username,
 	}
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsS)

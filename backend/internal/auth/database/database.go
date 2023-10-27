@@ -1,14 +1,14 @@
 package database
 
 import (
-	"backend/internal/database/models"
+	"backend/internal/auth/database/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func init() {
 	db := ConnectDatabase()
-	db.AutoMigrate(&models.User{}, &models.Files{})
+	db.AutoMigrate(&models.User{})
 	db.Commit()
 }
 

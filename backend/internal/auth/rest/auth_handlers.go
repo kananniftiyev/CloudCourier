@@ -2,7 +2,7 @@ package rest
 
 import (
 	"backend/internal/auth"
-	"backend/internal/database/repository"
+	"backend/internal/auth/database/repository"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -48,6 +48,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	cookieCheck, err := r.Cookie("jwt")
+	if err == nil && cookieCheck != nil {
+		http.Error(w, "User is already authenticated", http.StatusUnauthorized)
+		return
+
+	}
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,13 +81,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := auth.CreateNewJWT(loggedUser.ID)
+	token, err := auth.CreateNewJWT(loggedUser.ID, loggedUser.Username)
 
 	cookie := &http.Cookie{
 		Name:     "jwt",
 		Value:    token,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
+		Domain:   "localhost",
+		Path:     "/",
 	}
 
 	http.SetCookie(w, cookie)
@@ -89,22 +97,28 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// TODO: Logout
-
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	cookie := &http.Cookie{Name: "jwt", Value: "", Expires: time.Now().Add(-time.Hour), HttpOnly: true}
+	cookie := &http.Cookie{Name: "jwt", Value: "", Expires: time.Unix(0, 0), HttpOnly: true, Domain: "localhost",
+		Path: "/"}
 	http.SetCookie(w, cookie)
-	newMessage := Message{"Logged out successfully."}
-	message, err := json.Marshal(newMessage)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+	// Prepare a response message.
+	response := Message{
+		Message: "Logged out successfully",
 	}
 
+	// Marshal the response to JSON.
+	responseJSON, err := json.Marshal(response)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Failed to create JSON response", http.StatusInternalServerError)
+		return
+	}
+
+	// Set the response headers.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(message)
-
+	w.Write(responseJSON)
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
