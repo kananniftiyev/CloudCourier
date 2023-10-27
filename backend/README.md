@@ -9,7 +9,6 @@
 - [Getting Started](#getting-started)
     - [Installation](#installation)
     - [Configuration](#configuration)
-- [Usage](#usage)
 - [API Documentation](#api-documentation)
 
 ## Technologies Utilized
@@ -55,3 +54,52 @@ The Email Service handles sending email notifications for various events, includ
 The Storage Service periodically checks Firebase Storage to manage and clean up expired files. It performs the following tasks:
 - Scans Firebase Storage for expired files.
 - Deletes expired files to free up storage space.
+
+## Getting Started
+
+### Installation
+
+- Clone this Repository
+```bash
+git clone https://github.com/kananniftiyev/CloudShareX
+```
+- Move into project folder
+```bash
+cd YOUR_PROJECT_DIR
+```
+
+- Run **run_script.bat** file in **cmd** folder to start all services at the same time.
+```bash
+.\run_services.bat
+```
+
+### Configuration
+
+Before you begin working on this project, it's important to perform some initial configuration to ensure a smooth setup.
+
+### 1. Firebase Credentials
+
+**Location:** `backend` folder
+
+1. Place your Firebase credentials file in the `backend` folder.
+2. Update the file path to your Firebase credentials in the `utils/firebase.go` file to ensure proper authentication and access to Firebase services.
+
+### 2. Database Settings
+
+In each service's respective database folder, make sure to configure the following settings:
+
+- **Port**: Set the correct port for the database.
+- **User**: Provide the username required for accessing the database.
+- **Password**: Specify the password necessary for database access.
+
+By adjusting these configuration parameters in the appropriate database folders for each service, you'll establish the correct database connectivity.
+
+By following these configuration guidelines, you'll be well-prepared to initiate and run your project with all the necessary settings in place.
+You can use this Markdown code to replace the content of your readme.md file.
+
+## API Documentation
+
+Api Documentation is in the folder of each Service that uses REST API. These Are:
+
+- Auth Service
+- File Service

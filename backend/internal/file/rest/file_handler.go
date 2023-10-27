@@ -3,6 +3,7 @@ package rest
 import (
 	"backend/internal/file"
 	"backend/internal/file/database"
+	"backend/utils"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -24,7 +25,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	password := r.FormValue("password")
-	app, err := file_upload.InitializeFirebase()
+	app, err := utils.InitializeFirebase()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
