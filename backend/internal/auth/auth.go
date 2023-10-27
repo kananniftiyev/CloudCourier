@@ -22,7 +22,7 @@ type CustomClaims struct {
 }
 
 func HashPassword(enteredPassword string) (string, error) {
-	cost := 12
+	cost := 14
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(enteredPassword), cost)
 	if err != nil {
 		return "", err

@@ -4,16 +4,19 @@ import (
 	"backend/internal/file"
 	"backend/internal/file/database"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 	"io"
 	"log"
 	"mime/multipart"
 	"net/http"
 )
 
-// TODO: Add Password
+//TODO: Refactor Code
+
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
 	if err != nil {
@@ -96,6 +99,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to get file URL", http.StatusInternalServerError)
 		return
 	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 
 	// Create New Mongo Record
 	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
@@ -106,7 +110,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		FileName:   handler.Filename,
 		FilePath:   fileURL,
 		SpecialURL: fileUUID,
-		Password:   password,
+		Password:   string(hashedPassword),
 	}
 
 	err = fileRepo.Create(context.Background(), &newFileRecord)
@@ -123,5 +127,55 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
+	uuidx := r.FormValue("uuid")
+	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
+	decodedU, err := file_upload.DecodeUUID(uuidx)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	file, err := fileRepo.FindUUID(context.Background(), decodedU)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response, err := json.Marshal(file)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
+func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
+	username := r.FormValue("username")
+	fileRep := database.NewFileRepository(database.ConnectToMongoDB())
+	files, err := fileRep.FindAllUserFiles(context.Background(), username)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Convert files to JSON
+	response, err := json.Marshal(files)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set response headers and write JSON response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
 
 }

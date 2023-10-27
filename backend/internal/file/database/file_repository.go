@@ -46,3 +46,27 @@ func (r *FileRepository) FindUUID(ctx context.Context, uuidx uuid.UUID) (*File, 
 	}
 	return &file, nil
 }
+
+func (r *FileRepository) FindAllUserFiles(ctx context.Context, username string) ([]*File, error) {
+	filter := bson.M{"username": username}
+	cur, err := r.collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(ctx)
+
+	var files []*File
+	for cur.Next(ctx) {
+		var file File
+		if err := cur.Decode(&file); err != nil {
+			return nil, err
+		}
+		files = append(files, &file)
+	}
+
+	if err := cur.Err(); err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}

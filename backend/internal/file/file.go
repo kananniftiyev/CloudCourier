@@ -90,7 +90,7 @@ func GetUserFromJWT(r *http.Request) (int, string, error) {
 	return int(claims.UserID), claims.Username, nil
 }
 
-func decodeUUID(base64UUID string) (uuid.UUID, error) {
+func DecodeUUID(base64UUID string) (uuid.UUID, error) {
 	// Decode the Base64 string into bytes
 	uuidBytes, err := base64.StdEncoding.DecodeString(base64UUID)
 	if err != nil {

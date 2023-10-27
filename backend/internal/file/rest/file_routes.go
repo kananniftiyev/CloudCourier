@@ -5,6 +5,8 @@ import (
 )
 
 func InitializeRoutes(r *chi.Mux) {
-	r.Post("/file-upload/upload", FileUploadHandler)
+	r.Post("/file/upload", FileUploadHandler)
+	r.Get("/file/retrieve", FileRetrieveHandler)
+	r.Get("/file/history", FileUploadHistory)
 
 }
