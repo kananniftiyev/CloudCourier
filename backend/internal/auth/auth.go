@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"backend/utils"
 	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -10,16 +11,6 @@ import (
 	"strconv"
 	"time"
 )
-
-const SECRET_KEY = "secret"
-
-type CustomClaims struct {
-	jwt.StandardClaims
-	UserID   uint
-	Username string
-
-	// Add other custom claims as needed
-}
 
 func HashPassword(enteredPassword string) (string, error) {
 	cost := 14
@@ -45,8 +36,8 @@ func VerifyToken(next http.Handler) http.Handler {
 		}
 
 		// Verify the JWT token
-		token, err := jwt.ParseWithClaims(cookie.Value, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return []byte(SECRET_KEY), nil
+		token, err := jwt.ParseWithClaims(cookie.Value, &utils.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte(utils.SECRET_KEY), nil
 		})
 
 		if err != nil {
@@ -60,7 +51,7 @@ func VerifyToken(next http.Handler) http.Handler {
 			return
 		}
 
-		claims, ok := token.Claims.(*CustomClaims)
+		claims, ok := token.Claims.(*utils.CustomClaims)
 
 		if !ok {
 			http.Error(w, "Failed to get token claims", http.StatusUnauthorized)
@@ -74,9 +65,9 @@ func VerifyToken(next http.Handler) http.Handler {
 
 func CreateNewJWT(ID uint, username string) (string, error) {
 	// Convert the SECRET_KEY string to a byte array
-	key := []byte(SECRET_KEY)
+	key := []byte(utils.SECRET_KEY)
 
-	claimsS := CustomClaims{
+	claimsS := utils.CustomClaims{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    strconv.Itoa(int(ID)),
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),

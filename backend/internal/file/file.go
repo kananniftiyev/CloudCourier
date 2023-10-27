@@ -1,40 +1,17 @@
 package file_upload
 
 import (
+	"backend/utils"
 	"context"
 	"encoding/base64"
-	firebase "firebase.google.com/go"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
-	"google.golang.org/api/option"
 	"log"
 	"net/http"
 )
 
-const SECRET_KEY = "secret"
-
-type CustomClaims struct {
-	jwt.StandardClaims
-	UserID   uint
-	Username string
-
-	// Add other custom claims as needed
-}
-
-func InitializeFirebase() (*firebase.App, error) {
-	opt := option.WithCredentialsFile("C:\\Users\\kenan\\Documents\\GitHub\\CloudShareX\\backend\\firebase-x.json") // Replace with your Firebase Admin SDK credentials file
-
-	app, err := firebase.NewApp(context.Background(), nil, opt)
-	if err != nil {
-		log.Fatalf("Error initializing Firebase: %v", err)
-		return nil, err
-	}
-
-	return app, nil
-}
-
 func GetFileURL(bucketName, objectName string) (string, error) {
-	app, err := InitializeFirebase()
+	app, err := utils.InitializeFirebase()
 	if err != nil {
 		return "", err
 	}
@@ -69,8 +46,10 @@ func GetUserFromJWT(r *http.Request) (int, string, error) {
 		log.Print(err)
 		return 0, "", err
 	}
-	token, err := jwt.ParseWithClaims(cookie.Value, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+	customClaims := &utils.CustomClaims{}
+
+	token, err := jwt.ParseWithClaims(cookie.Value, customClaims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(utils.SECRET_KEY), nil
 	})
 
 	if err != nil {
@@ -82,7 +61,7 @@ func GetUserFromJWT(r *http.Request) (int, string, error) {
 		log.Println(err)
 		return 0, "", err
 	}
-	claims, ok := token.Claims.(*CustomClaims)
+	claims, ok := token.Claims.(*utils.CustomClaims)
 	if !ok {
 		log.Printf("Failed to get custom claims from JWT token", err)
 		return 0, "", err
