@@ -3,7 +3,6 @@ package database
 import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
 )
 
 type File struct {
@@ -13,6 +12,6 @@ type File struct {
 	FileName   string
 	FilePath   string
 	SpecialURL uuid.UUID
-	ExpiryDate time.Time
+	ExpiryDate string
 	Password   string `bson:",omitempty"`
 }

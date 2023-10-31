@@ -14,10 +14,11 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"time"
 )
 
-//TODO: Refactor Code
-
+// TODO: Refactor Code
+// Todo: Write code to check if there are file with same name if yes then do not let them do it.
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
 	if err != nil {
@@ -76,6 +77,14 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a writer for the Firebase Storage object
 	writer := fileRef.NewWriter(context.Background())
 
+	expDate := time.Now().Add(1 * time.Hour)
+	expDate = expDate.UTC()
+	expirationDateString := expDate.Format(time.RFC3339)
+	metadata := map[string]string{
+		"expiry_date": expirationDateString,
+	}
+
+	writer.ObjectAttrs.Metadata = metadata
 	// Copy the uploaded file's content to Firebase Storage
 	_, err = io.Copy(writer, file)
 	if err != nil {
@@ -111,6 +120,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		FileName:   handler.Filename,
 		FilePath:   fileURL,
 		SpecialURL: fileUUID,
+		ExpiryDate: expirationDateString,
 		Password:   string(hashedPassword),
 	}
 

@@ -19,7 +19,6 @@ The project leverages a versatile stack of technologies, enhancing its capabilit
 - **Firebase**: Used for cloud services and authentication.
 - **MongoDB**: A NoSQL database for flexible data storage.
 - **Postgres**: A robust relational database for structured data.
-- **gRPC**: A high-performance, language-agnostic remote procedure call framework.
 - **REST**: Representational State Transfer, an architectural style for web services.
 
 These technologies, combined, empower the project to deliver a robust and scalable solution.
