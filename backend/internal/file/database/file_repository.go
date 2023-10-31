@@ -37,7 +37,7 @@ func (r *FileRepository) Delete(ctx context.Context, id primitive.ObjectID) erro
 	return err
 }
 
-func (r *FileRepository) FindUUID(ctx context.Context, uuidx uuid.UUID) (*File, error) {
+func (r *FileRepository) FindByUUID(ctx context.Context, uuidx uuid.UUID) (*File, error) {
 	var file File
 	filter := bson.M{"specialurl": uuidx}
 	err := r.collection.FindOne(ctx, filter).Decode(&file)

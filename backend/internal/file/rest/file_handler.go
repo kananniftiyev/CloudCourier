@@ -137,7 +137,7 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := fileRepo.FindUUID(context.Background(), decodedU)
+	file, err := fileRepo.FindByUUID(context.Background(), decodedU)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -156,6 +156,7 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+// TODO: implement with front end.
 func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	fileRep := database.NewFileRepository(database.ConnectToMongoDB())
