@@ -78,7 +78,6 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	writer := fileRef.NewWriter(context.Background())
 
 	expDate := time.Now().Add(1 * time.Hour)
-	expDate = expDate.UTC()
 	expirationDateString := expDate.Format(time.RFC3339)
 	metadata := map[string]string{
 		"expiry_date": expirationDateString,

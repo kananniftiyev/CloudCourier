@@ -2,16 +2,12 @@ package main
 
 import (
 	"backend/internal/auth/rest"
-	"github.com/common-nighthawk/go-figure"
+	"backend/utils"
 	"log"
 )
 
-func DisplayText() {
-	figure.NewFigure("CloudShareX", "slant", true).Print()
-}
-
 func main() {
-	DisplayText()
+	utils.DisplayText()
 	log.Println("Auth service is starting...")
 	rest.AuthStart()
 }

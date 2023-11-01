@@ -2,33 +2,39 @@ package database
 
 import (
 	"backend/internal/auth/database/models"
-	"database/sql"
 	"fmt"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
-var db *sql.DB
-var server = os.Getenv("DB_HOST")
-var port = os.Getenv("DB_PORT")
-var user = os.Getenv("DB_USER")
-var password = os.Getenv("DB_PASSWORD")
-var database = os.Getenv("DB_NAME")
-
 func init() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	envFile := filepath.Join(dir, ".env")
+	err = godotenv.Load(envFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 	db := ConnectDatabase()
 	db.AutoMigrate(&models.User{})
 	db.Commit()
 }
 
 func ConnectDatabase() *gorm.DB {
+	var port = os.Getenv("DB_PORT")
 	portInt, err := strconv.Atoi(port)
 	if err != nil {
 		panic("Failed to convert port to an integer")
 	}
-	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", user, password, server, portInt, database)
+	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), portInt, os.Getenv("DB_NAME"))
 	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to Connect to Database")
