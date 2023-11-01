@@ -6,14 +6,16 @@ import (
 	"fmt"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"os"
+	"strconv"
 )
 
 var db *sql.DB
-var server = "kananniftiyev.database.windows.net"
-var port = 1433
-var user = "post"
-var password = "Kanan19102004k"
-var database = "Users"
+var server = os.Getenv("DB_HOST")
+var port = os.Getenv("DB_PORT")
+var user = os.Getenv("DB_USER")
+var password = os.Getenv("DB_PASSWORD")
+var database = os.Getenv("DB_NAME")
 
 func init() {
 	db := ConnectDatabase()
@@ -22,7 +24,11 @@ func init() {
 }
 
 func ConnectDatabase() *gorm.DB {
-	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", user, password, server, port, database)
+	portInt, err := strconv.Atoi(port)
+	if err != nil {
+		panic("Failed to convert port to an integer")
+	}
+	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", user, password, server, portInt, database)
 	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Failed to Connect to Database")
