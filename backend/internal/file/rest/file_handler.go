@@ -77,7 +77,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a writer for the Firebase Storage object
 	writer := fileRef.NewWriter(context.Background())
 
-	expDate := time.Now().Add(1 * time.Hour)
+	expDate := time.Now().Add(12 * time.Hour)
 	expirationDateString := expDate.Format(time.RFC3339)
 	metadata := map[string]string{
 		"expiry_date": expirationDateString,

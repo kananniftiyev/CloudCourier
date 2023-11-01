@@ -7,3 +7,7 @@ start cmd /k "cd /d C:\Users\kenan\Documents\GitHub\CloudShareX\backend\cmd\auth
 :: Run File Service in a new Command Prompt window
 echo Running File Service
 start cmd /k "cd /d C:\Users\kenan\Documents\GitHub\CloudShareX\backend\cmd\file && go run main.go"
+
+:: Run Storage Service in a new Command Prompt window
+echo Running Storage Service
+start cmd /k "cd /d C:\Users\kenan\Documents\GitHub\CloudShareX\backend\cmd\storage && go run main.go"

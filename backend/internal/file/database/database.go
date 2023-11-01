@@ -48,6 +48,6 @@ func ConnectToMongoDB() *mongo.Database {
 	}
 
 	// Specify the database and collection you want to work with.
-	databaseName := "your-database-name"
+	databaseName := "Files-Development"
 	return client.Database(databaseName)
 }
