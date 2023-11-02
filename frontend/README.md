@@ -1,8 +1,32 @@
-# React + Vite
+<h1 align="center">CloudShareX - Frontend</h1>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Table of Content:
 
-Currently, two official plugins are available:
+- [Technologies](#technologies)
+- [Setup](#setup)
+- [Status](#status)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technologies/Libraries ⚛️
+
+- **React.Js**
+- **React Router**
+- **Vite**
+
+## Setup 💻
+
+- download or clone the repository.
+- install libraries.
+
+```bash
+npm install
+```
+
+- run
+
+```bash
+npm run dev
+```
+
+## Status 📶
+
+[name of project] is still in progress. `Version 2` will be out soon.

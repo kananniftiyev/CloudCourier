@@ -6,6 +6,7 @@ import Switch from "@mui/joy/Switch";
 import Divider from "@mui/joy/Divider";
 import { BsPlusLg } from "react-icons/bs";
 import { BsFillTrashFill } from "react-icons/bs";
+import { useEffect } from "react";
 
 import { useState } from "react";
 
@@ -13,15 +14,25 @@ function FileDrop() {
   const [showElement, setShowElement] = useState(true);
   const [afterUploadElements, setAfterUploadElements] = useState(false);
   const [file, setFile] = useState(null);
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
       setShowElement(false);
       setAfterUploadElements(true);
-      const fileType = selectedFile.type;
     }
   };
+
+  const deleteFile = () => {
+    setFile(null);
+    setShowElement(true);
+    setAfterUploadElements(false);
+  };
+
+  useEffect(() => {
+    console.log(file);
+  }, [file]);
 
   return (
     <div className="filedrop flex flex-row gap-6">
@@ -48,23 +59,38 @@ function FileDrop() {
         </Button>
       </div>
       <div className="right-upload p-8">
-        <label htmlFor="file">
-          <div className="sheet pl-4 pr-12 add-files flex flex-row items-center justify-between gap-3">
-            <BsPlusLg className="bsplus" />
-            <div className="flex flex-col ">
-              <Typography level="body-lg" className="font-bold">
-                Add Files
-              </Typography>
-              <Typography level="body-xs">or Select Folder</Typography>
-            </div>
-          </div>
-        </label>
-        <input type="file" id="file" />
+        {showElement ? (
+          <>
+            <label htmlFor="file">
+              <div className="sheet pl-4 pr-12 add-files flex flex-row items-center justify-between gap-3">
+                <BsPlusLg className="bsplus" />
+                <div className="flex flex-col ">
+                  <Typography level="body-lg" className="font-bold">
+                    Add Files
+                  </Typography>
+                  <Typography level="body-xs">or Select Folder</Typography>
+                </div>
+              </div>
+            </label>
+            <input type="file" id="file" onChange={handleFileChange} />
+          </>
+        ) : null}
+
+        {afterUploadElements ? (
+          <>
+            {file && file.name && (
+              <div className="after sheet pl-4 pr-12">
+                <Typography level="body-md">{file.name}</Typography>
+              </div>
+            )}
+          </>
+        ) : null}
+
         <div className="bottom-of flex flex-row justify-between items-center">
           <Typography>
             0 <span className="font-bold">files</span> (0 B)
           </Typography>
-          <Button variant="plain">
+          <Button variant="plain" onClick={deleteFile}>
             <BsFillTrashFill />
           </Button>
         </div>
