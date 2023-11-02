@@ -4,7 +4,6 @@ import (
 	"backend/utils"
 	"context"
 	"firebase.google.com/go/storage"
-	"fmt"
 	"github.com/robfig/cron/v3"
 	"google.golang.org/api/iterator"
 	"log"
@@ -22,13 +21,19 @@ func StartStorageCheck() {
 		log.Fatal(err)
 	}
 
+	// Run the task immediately when the function starts
+	log.Println("Checking and deleting expired files...")
+	if err := deleteExpiredFiles(client); err != nil {
+		log.Printf("Error deleting expired files: %v\n", err)
+	}
+
 	c := cron.New()
 
 	// Schedule a job to check and delete expired files every day at midnight
-	_, err = c.AddFunc("@midnight", func() {
-		fmt.Println("Checking and deleting expired files...")
+	_, err = c.AddFunc("@hourly", func() {
+		log.Println("Checking and deleting expired files...")
 		if err := deleteExpiredFiles(client); err != nil {
-			fmt.Printf("Error deleting expired files: %v\n", err)
+			log.Printf("Error deleting expired files: %v\n", err)
 		}
 	})
 	if err != nil {
@@ -79,7 +84,7 @@ func deleteExpiredFiles(client *storage.Client) error {
 			if err := bucket.Object(objAttrs.Name).Delete(ctx); err != nil {
 				return err
 			}
-			fmt.Printf("Deleted expired file: %s\n", objAttrs.Name)
+			log.Printf("Deleted expired file: %s\n", objAttrs.Name)
 		}
 	}
 
