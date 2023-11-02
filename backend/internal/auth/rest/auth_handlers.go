@@ -3,6 +3,7 @@ package rest
 import (
 	"backend/internal/auth"
 	"backend/internal/auth/database/repository"
+	"backend/utils"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -122,7 +123,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
-	claims, ok := r.Context().Value("claims").(*auth.CustomClaims)
+	claims, ok := r.Context().Value("claims").(*utils.CustomClaims)
 	if !ok {
 		http.Error(w, "Failed to get user claims", http.StatusUnauthorized)
 		return

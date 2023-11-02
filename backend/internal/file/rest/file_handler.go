@@ -3,6 +3,7 @@ package rest
 import (
 	"backend/internal/file"
 	"backend/internal/file/database"
+	"backend/utils"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,10 +14,11 @@ import (
 	"log"
 	"mime/multipart"
 	"net/http"
+	"time"
 )
 
-//TODO: Refactor Code
-
+// TODO: Refactor Code
+// Todo: Write code to check if there are file with same name if yes then do not let them do it.
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
 	if err != nil {
@@ -24,7 +26,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	password := r.FormValue("password")
-	app, err := file_upload.InitializeFirebase()
+	app, err := utils.InitializeFirebase()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -75,6 +77,13 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a writer for the Firebase Storage object
 	writer := fileRef.NewWriter(context.Background())
 
+	expDate := time.Now().Add(6 * time.Hour)
+	expirationDateString := expDate.Format(time.RFC3339)
+	metadata := map[string]string{
+		"expiry_date": expirationDateString,
+	}
+
+	writer.ObjectAttrs.Metadata = metadata
 	// Copy the uploaded file's content to Firebase Storage
 	_, err = io.Copy(writer, file)
 	if err != nil {
@@ -110,6 +119,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		FileName:   handler.Filename,
 		FilePath:   fileURL,
 		SpecialURL: fileUUID,
+		ExpiryDate: expirationDateString,
 		Password:   string(hashedPassword),
 	}
 
@@ -136,7 +146,7 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := fileRepo.FindUUID(context.Background(), decodedU)
+	file, err := fileRepo.FindByUUID(context.Background(), decodedU)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -155,6 +165,7 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
+// TODO: implement with front end.
 func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	fileRep := database.NewFileRepository(database.ConnectToMongoDB())

@@ -7,8 +7,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Username         string
-	Email            string
+	Username         string `gorm:"unique;not null"`
+	Email            string `gorm:"unique;not null"`
 	PasswordHash     string
 	RegistrationDate time.Time
 }
