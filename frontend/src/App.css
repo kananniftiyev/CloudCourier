@@ -123,7 +123,8 @@ body {
 .right-upload {
   background-color: white;
   border-radius: 8px;
-  height: auto;
+  height: 180px;
+  width: 260px;
 }
 
 .bsplus {

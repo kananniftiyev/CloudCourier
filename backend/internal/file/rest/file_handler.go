@@ -19,6 +19,7 @@ import (
 
 // TODO: Refactor Code
 // Todo: Write code to check if there are file with same name if yes then do not let them do it.
+// Todo: Last Changes
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
 	if err != nil {
@@ -26,6 +27,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	password := r.FormValue("password")
+	title := r.FormValue("title")
 	app, err := utils.InitializeFirebase()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -121,6 +123,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		SpecialURL: fileUUID,
 		ExpiryDate: expirationDateString,
 		Password:   string(hashedPassword),
+		Title:      title,
 	}
 
 	err = fileRepo.Create(context.Background(), &newFileRecord)
