@@ -32,6 +32,7 @@ function FileDrop() {
       "application/pdf": "pdf",
       "text/plain": "txt",
       "application/x-msdownload": "exe",
+      "application/x-zip-compressed": "zip",
       // Add more mappings for other MIME types if needed
     };
     return mimeTypeMap[mimeType] || mimeType;
