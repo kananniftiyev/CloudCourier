@@ -13,7 +13,6 @@ function App() {
         <FileDrop />
         <Hero />
       </div>
-
       <Footer />
     </>
   );

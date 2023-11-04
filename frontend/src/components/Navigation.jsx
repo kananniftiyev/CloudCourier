@@ -6,10 +6,15 @@ import Drawer from "@mui/joy/Drawer";
 import Input from "@mui/joy/Input";
 import { BsShieldLockFill } from "react-icons/bs";
 import Checkbox from "@mui/joy/Checkbox";
+import { useState } from "react";
 
+// TODO: Seperate sign up and login from nav.
+// TODO: give info when wrong form fill.
 function Navigation() {
   const [open, setOpen] = React.useState(false);
   const [openSign, setOpenSign] = React.useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   const toggleDrawer = (inOpen) => (event) => {
     if (
@@ -31,6 +36,49 @@ function Navigation() {
     }
 
     setOpenSign(inOpenSign);
+  };
+
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    passwordAgain: "",
+  });
+
+  const isFormFilled = Object.values(formData).every(
+    (value) => value.trim() !== ""
+  );
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    if (name === "email") {
+      // Check email format with a regular expression
+      const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+      setEmailError(!emailPattern.test(value));
+    }
+
+    if (name === "passwordAgain") {
+      if (value !== formData.password) {
+        setPasswordError(true);
+      } else {
+        setPasswordError(false);
+      }
+    }
+  };
+
+  const handleSign = () => {
+    if (emailError) {
+      return;
+    }
+    // You can access the form data in the `formData` state here
+    console.log("Form Data:", formData);
+
+    // You can perform any further actions here, such as sending the data to a server.
   };
 
   return (
@@ -98,15 +146,44 @@ function Navigation() {
                   </Typography>
                 </div>
               </div>
-              <Input className="mb-4" placeholder="Username" />
-              <Input className="mb-4" placeholder="Email" />
-              <Input className="mb-4" type="password" placeholder="Password" />
+              <Input
+                className="mb-4"
+                placeholder="Username"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+              />
+              <Input
+                className="mb-4"
+                placeholder="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                type="email"
+                error={emailError}
+              />
+              <Input
+                className="mb-4"
+                type="password"
+                placeholder="Password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
               <Input
                 className="mb-8"
                 type="password"
                 placeholder="Password Again"
+                name="passwordAgain"
+                value={formData.passwordAgain}
+                error={passwordError}
+                onChange={handleChange}
               />
-              <Button size="lg" disabled>
+              <Button
+                size="lg"
+                disabled={!isFormFilled || emailError || passwordError}
+                onClick={handleSign}
+              >
                 Sign up
               </Button>
             </Drawer>

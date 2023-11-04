@@ -14,4 +14,5 @@ type File struct {
 	SpecialURL uuid.UUID
 	ExpiryDate string
 	Password   string `bson:",omitempty"`
+	Title      string
 }
