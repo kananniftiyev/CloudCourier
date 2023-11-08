@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
 import Link from "@mui/joy/Link";
@@ -6,48 +6,20 @@ import Drawer from "@mui/joy/Drawer";
 import Input from "@mui/joy/Input";
 import { BsShieldLockFill } from "react-icons/bs";
 import Checkbox from "@mui/joy/Checkbox";
-import { useState } from "react";
 
-// TODO: Seperate sign up and login from nav.
-// TODO: give info when wrong form fill.
-function Navigation() {
-  const [open, setOpen] = React.useState(false);
-  const [openSign, setOpenSign] = React.useState(false);
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-
-  const toggleDrawer = (inOpen) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setOpen(inOpen);
-  };
-
-  const toggleDrawerSignIn = (inOpenSign) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setOpenSign(inOpenSign);
-  };
-
+function SignInForm({ open, onClose }) {
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
-    passwordAgain: "",
   });
+
+  const [emailError, setEmailError] = useState(false);
 
   const isFormFilled = Object.values(formData).every(
     (value) => value.trim() !== ""
   );
+
+  const isEmailValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,28 +29,186 @@ function Navigation() {
     });
 
     if (name === "email") {
-      // Check email format with a regular expression
-      const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-      setEmailError(!emailPattern.test(value));
-    }
-
-    if (name === "passwordAgain") {
-      if (value !== formData.password) {
-        setPasswordError(true);
-      } else {
-        setPasswordError(false);
-      }
+      const isValidEmail = isEmailValid.test(value);
+      setEmailError(!isValidEmail);
     }
   };
 
-  const handleSign = () => {
+  const handleSignIn = () => {
     if (emailError) {
       return;
     }
-    // You can access the form data in the `formData` state here
-    console.log("Form Data:", formData);
 
-    // You can perform any further actions here, such as sending the data to a server.
+    console.log("Sign In Form Data:", formData);
+
+    // Perform sign-in actions here
+    // For example, send data to a server for authentication
+  };
+
+  return (
+    <Drawer
+      className="drawer-sign flex flex-col"
+      open={open}
+      onClose={onClose}
+      anchor="right"
+    >
+      <div className="flex flex-row justify-between mb-10">
+        <Typography level="h3">Login</Typography>
+        <div className="flex flex-row items-center gap-1">
+          <BsShieldLockFill className="lock" />
+          <Typography level="body-sm">
+            Accounts are secure and encrypted
+          </Typography>
+        </div>
+      </div>
+
+      <Input
+        className="mb-4"
+        placeholder="Email"
+        name="email"
+        onChange={handleChange}
+        value={formData.email}
+        error={emailError}
+      />
+      <Input
+        type="password"
+        placeholder="Password"
+        name="password"
+        onChange={handleChange}
+        value={formData.password}
+      />
+      <div className="flex flex-row justify-between mt-8 mb-6">
+        <Checkbox label="Remember me" />
+        <Link>Forgot your password?</Link>
+      </div>
+      <Button
+        size="lg"
+        disabled={!isFormFilled || emailError}
+        onClick={handleSignIn}
+      >
+        Login
+      </Button>
+    </Drawer>
+  );
+}
+
+function SignUpForm({ open, onClose }) {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
+  const isFormFilled = Object.values(formData).every(
+    (value) => value.trim() !== ""
+  );
+
+  const isEmailValid = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    if (name === "email") {
+      const isValidEmail = isEmailValid.test(value);
+      setEmailError(!isValidEmail);
+    }
+
+    if (name === "confirmPassword" && value !== formData.password) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    }
+  };
+
+  const handleSignUp = () => {
+    if (emailError || passwordError) {
+      return;
+    }
+
+    console.log("Sign Up Form Data:", formData);
+
+    // Perform sign-up actions here
+    // For example, send data to a server to create a new account
+  };
+
+  return (
+    <Drawer
+      className="drawer-create"
+      open={open}
+      onClose={onClose}
+      anchor="right"
+    >
+      <div className="flex flex-row justify-between mb-10">
+        <Typography level="h3">Sign up</Typography>
+        <div className="flex flex-row items-center gap-1">
+          <BsShieldLockFill className="lock" />
+          <Typography level="body-sm">
+            Accounts are secure and encrypted
+          </Typography>
+        </div>
+      </div>
+      <Input
+        className="mb-4"
+        placeholder="Username"
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+      />
+      <Input
+        className="mb-4"
+        placeholder="Email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        type="email"
+        error={emailError}
+      />
+      <Input
+        className="mb-4"
+        type="password"
+        placeholder="Password"
+        name="password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      <Input
+        className="mb-8"
+        type="password"
+        placeholder="Password Again"
+        name="confirmPassword"
+        value={formData.confirmPassword}
+        error={passwordError}
+        onChange={handleChange}
+      />
+      <Button
+        size="lg"
+        disabled={!isFormFilled || emailError || passwordError}
+        onClick={handleSignUp}
+      >
+        Sign up
+      </Button>
+    </Drawer>
+  );
+}
+
+function Navigation() {
+  const [isSignInDrawerOpen, setSignInDrawerOpen] = useState(false);
+  const [isSignUpDrawerOpen, setSignUpDrawerOpen] = useState(false);
+
+  const toggleSignInDrawer = (open) => () => {
+    setSignInDrawerOpen(open);
+  };
+
+  const toggleSignUpDrawer = (open) => () => {
+    setSignUpDrawerOpen(open);
   };
 
   return (
@@ -94,102 +224,28 @@ function Navigation() {
             <Link
               underline="none"
               className="button-login"
-              onClick={toggleDrawerSignIn(true)}
+              onClick={toggleSignInDrawer(true)}
             >
               Sign in
             </Link>
-            <Drawer
-              className="drawer-sign flex flex-col"
-              open={openSign}
-              onClose={toggleDrawerSignIn(false)}
-              anchor="right"
-            >
-              <div className="flex flex-row justify-between mb-10">
-                <Typography level="h3">Login</Typography>
-                <div className="flex flex-row items-center gap-1">
-                  <BsShieldLockFill className="lock" />
-                  <Typography level="body-sm">
-                    Accounts are secure and encrypted
-                  </Typography>
-                </div>
-              </div>
-
-              <Input className="mb-4" placeholder="Email" />
-              <Input type="password" placeholder="Password" />
-              <div className="flex flex-row justify-between mt-8 mb-6">
-                <Checkbox label="Remember me" />
-                <Link>Forgot your password?</Link>
-              </div>
-              <Button size="lg" disabled>
-                Login
-              </Button>
-            </Drawer>
             <Button
               className="button-signup"
               size="lg"
-              onClick={toggleDrawer(true)}
+              onClick={toggleSignUpDrawer(true)}
             >
-              Create a Account
+              Create an Account
             </Button>
-            <Drawer
-              className="drawer-create"
-              open={open}
-              onClose={toggleDrawer(false)}
-              anchor="right"
-            >
-              <div className="flex flex-row justify-between mb-10">
-                <Typography level="h3">Sign up</Typography>
-                <div className="flex flex-row items-center gap-1">
-                  <BsShieldLockFill className="lock" />
-                  <Typography level="body-sm">
-                    Accounts are secure and encrypted
-                  </Typography>
-                </div>
-              </div>
-              <Input
-                className="mb-4"
-                placeholder="Username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-              />
-              <Input
-                className="mb-4"
-                placeholder="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                type="email"
-                error={emailError}
-              />
-              <Input
-                className="mb-4"
-                type="password"
-                placeholder="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-              <Input
-                className="mb-8"
-                type="password"
-                placeholder="Password Again"
-                name="passwordAgain"
-                value={formData.passwordAgain}
-                error={passwordError}
-                onChange={handleChange}
-              />
-              <Button
-                size="lg"
-                disabled={!isFormFilled || emailError || passwordError}
-                onClick={handleSign}
-              >
-                Sign up
-              </Button>
-            </Drawer>
           </div>
         </div>
       </div>
+      <SignInForm
+        open={isSignInDrawerOpen}
+        onClose={toggleSignInDrawer(false)}
+      />
+      <SignUpForm
+        open={isSignUpDrawerOpen}
+        onClose={toggleSignUpDrawer(false)}
+      />
     </header>
   );
 }
