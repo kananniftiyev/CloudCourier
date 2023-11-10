@@ -97,7 +97,6 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	err = writer.Close()
 	if err != nil {
 		fmt.Println(err)
-
 		http.Error(w, "Unable to close the Firebase Storage writer", http.StatusInternalServerError)
 		return
 	}
@@ -139,6 +138,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// FileRetrieveHandler TODO: Get password if file has password.
 func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	uuidx := r.FormValue("uuid")
 	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
@@ -168,7 +168,7 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-// TODO: implement with front end.
+// FileUploadHistory TODO: implement with front end.
 func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	fileRep := database.NewFileRepository(database.ConnectToMongoDB())

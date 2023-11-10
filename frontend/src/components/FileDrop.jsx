@@ -17,6 +17,10 @@ function FileDrop() {
   const [file, setFile] = useState(null);
   const [checked, setChecked] = useState(false);
 
+  const [fileData, setFileData] = useState({
+    title: "",
+  });
+
   const formatFileSize = (size) => {
     if (size < 1024) {
       return `${size} B`;
@@ -58,10 +62,26 @@ function FileDrop() {
     setChecked(isChecked);
 
     if (isChecked) {
+      setFileData({ ...fileData, password: "" });
+
       setPassowordElements(true);
     } else {
+      const { password, ...updatedFileData } = fileData;
+      setFileData(updatedFileData);
       setPassowordElements(false);
     }
+  };
+
+  const isFormFilled = Object.values(fileData).every(
+    (value) => value.trim() !== ""
+  );
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFileData({
+      ...fileData,
+      [name]: value,
+    });
   };
 
   useEffect(() => {
@@ -71,7 +91,13 @@ function FileDrop() {
   return (
     <div className="filedrop flex flex-row gap-6">
       <div className="left  flex flex-col ">
-        <Input placeholder="Title" className="mb-4" />
+        <Input
+          placeholder="Title"
+          className="mb-4"
+          value={fileData.title}
+          onChange={handleChange}
+          name="title"
+        />
         <div className="sheet p-4 flex flex-row items-center mb-5 justify-around">
           <div className="left-sheet flex gap-0.5 flex-col">
             <Typography level="body-md">Password Protection</Typography>
@@ -91,7 +117,14 @@ function FileDrop() {
         {passowordElements ? (
           <>
             {" "}
-            <Input placeholder="Password" type="password" className="mb-4" />
+            <Input
+              placeholder="Password"
+              type="password"
+              className="mb-4"
+              name="password"
+              value={fileData.password}
+              onChange={handleChange}
+            />
           </>
         ) : null}
         <Divider />
@@ -99,7 +132,7 @@ function FileDrop() {
           By clicking 'Create Secure Link' you agree to the Terms of Service and
           Privacy & Cookie Notice.
         </Typography>
-        <Button className="" disabled size="lg">
+        <Button disabled={!isFormFilled || file === null} size="lg">
           Create Secure Link
         </Button>
       </div>
