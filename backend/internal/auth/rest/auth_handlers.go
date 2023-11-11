@@ -71,7 +71,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	err = auth.VerifyPassword(loginReq.Password, hashedPassword)
+	err = utils.VerifyPassword(loginReq.Password, hashedPassword)
 	if err != nil {
 		http.Error(w, "Email or Password is wrong", http.StatusConflict)
 		return
