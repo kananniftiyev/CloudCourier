@@ -21,11 +21,6 @@ func HashPassword(enteredPassword string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-func VerifyPassword(enteredPassword, hashedPassword string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(enteredPassword))
-	return err
-}
-
 func VerifyToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Retrieve the JWT token from the cookie

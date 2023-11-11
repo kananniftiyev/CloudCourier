@@ -138,9 +138,9 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// FileRetrieveHandler TODO: Get password if file has password.
 func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	uuidx := r.FormValue("uuid")
+	password := r.FormValue("password")
 	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
 	decodedU, err := file_upload.DecodeUUID(uuidx)
 	if err != nil {
@@ -153,6 +153,13 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = utils.VerifyPassword(password, file.Password)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
