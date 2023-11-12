@@ -19,10 +19,6 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-type Error struct {
-	ErrorN string `json:"error"`
-}
-
 type RequestedUserData struct {
 	CreatedAt time.Time `json:"createdAt"`
 	Username  string    `json:"username"`
