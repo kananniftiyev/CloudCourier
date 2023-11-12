@@ -1,3 +1,5 @@
+// File: rest/handlers.go
+
 package rest
 
 import (
@@ -13,72 +15,74 @@ import (
 
 var userRepo = repository.NewUserRepository()
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func respondWithError(w http.ResponseWriter, err error, statusCode int) {
+	log.Println(err)
+	http.Error(w, "", statusCode)
+	w.Write(utils.NewResponse(err, statusCode))
+}
 
+func parseRequestBody(r *http.Request, data interface{}) error {
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Failed to read request body", http.StatusInternalServerError)
-		return
+		return err
 	}
+	return json.Unmarshal(requestBody, data)
+}
 
-	var registerReq RegisterRequest
-	err = json.Unmarshal(requestBody, &registerReq)
-	if err != nil {
-		http.Error(w, "Failed to parse JSON request", http.StatusBadRequest)
-	}
+func registerUser(w http.ResponseWriter, registerReq RegisterRequest) {
 	hashedPassword, err := auth.HashPassword(registerReq.Password)
 	if err != nil {
-		log.Fatal("Could not hash The password")
+		respondWithError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	err = userRepo.CreateUser(registerReq.Username, registerReq.Email, hashedPassword)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
-	if err != nil {
-		log.Println(err)
 
-		newError := Error{ErrorN: err.Error()}
-		errorJson, _ := json.Marshal(newError)
-		http.Error(w, "", http.StatusConflict)
-		w.Write(errorJson)
-	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+}
+
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	var registerReq RegisterRequest
+	if err := parseRequestBody(r, &registerReq); err != nil {
+		respondWithError(w, err, http.StatusBadRequest)
+		return
+	}
+
+	registerUser(w, registerReq)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	cookieCheck, err := r.Cookie("jwt")
 	if err == nil && cookieCheck != nil {
-		http.Error(w, "User is already authenticated", http.StatusUnauthorized)
 		return
+	}
 
-	}
-	requestBody, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	var loginReq LoginRequest
-	err = json.Unmarshal(requestBody, &loginReq)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	if err := parseRequestBody(r, &loginReq); err != nil {
+		respondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
+
 	hashedPassword, err := userRepo.LoginUserCheck(loginReq.Email)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		respondWithError(w, err, http.StatusNotFound)
 		return
 	}
+
 	err = utils.VerifyPassword(loginReq.Password, hashedPassword)
 	if err != nil {
-		http.Error(w, "Email or Password is wrong", http.StatusConflict)
+		respondWithError(w, err, http.StatusConflict)
 		return
 	}
+
 	loggedUser, err := userRepo.GetUserWithEmail(loginReq.Email)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		respondWithError(w, err, http.StatusUnauthorized)
 		return
 	}
 
@@ -103,20 +107,16 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Path: "/"}
 	http.SetCookie(w, cookie)
 
-	// Prepare a response message.
 	response := Message{
 		Message: "Logged out successfully",
 	}
 
-	// Marshal the response to JSON.
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "Failed to create JSON response", http.StatusInternalServerError)
+		respondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
-	// Set the response headers.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseJSON)
@@ -132,11 +132,17 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := claims.UserID
 	user, err := userRepo.GetUserById(userID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		respondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
+
 	reqUser := RequestedUserData{Email: user.Email, Username: user.Username, CreatedAt: user.CreatedAt}
 	userJSON, err := json.Marshal(reqUser)
+	if err != nil {
+		respondWithError(w, err, http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(userJSON)

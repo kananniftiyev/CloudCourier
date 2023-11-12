@@ -17,6 +17,7 @@ import (
 	"time"
 )
 
+// TODO: Add message for every error to help front end.
 // TODO: Refactor Code
 // Todo: Write code to check if there are file with same name if yes then do not let them do it.
 // Todo: Last Changes
