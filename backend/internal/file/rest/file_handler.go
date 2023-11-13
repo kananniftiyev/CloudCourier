@@ -169,7 +169,11 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 
 // FileUploadHistory TODO: implement with front end.
 func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
-	username := r.FormValue("username")
+	_, username, err := file_upload.GetUserFromJWT(r)
+	if err != nil {
+		utils.RespondWithError(w, err, http.StatusUnauthorized)
+		return
+	}
 	fileRep := database.NewFileRepository(database.ConnectToMongoDB())
 	files, err := fileRep.FindAllUserFiles(context.Background(), username)
 	if err != nil {
