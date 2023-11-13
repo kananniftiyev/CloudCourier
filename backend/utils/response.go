@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 )
 
 type Response struct {
@@ -22,4 +23,10 @@ func NewResponse(error error, code int) []byte {
 		log.Fatal(err.Error())
 	}
 	return js
+}
+
+func RespondWithError(w http.ResponseWriter, err error, statusCode int) {
+	log.Println(err)
+	http.Error(w, "", statusCode)
+	w.Write(NewResponse(err, statusCode))
 }

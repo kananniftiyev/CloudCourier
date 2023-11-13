@@ -6,25 +6,26 @@ import (
 	"backend/utils"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"time"
 )
 
-// TODO: Add message for every error to help front end.
-// TODO: Refactor Code
+const (
+	firebaseBucket = "cloudsharex-b8353.appspot.com"
+	fileSizeLimit  = 50 * 1024 * 1024
+)
+
 // Todo: Write code to check if there are file with same name if yes then do not let them do it.
 // Todo: Last Changes
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	userId, username, err := file_upload.GetUserFromJWT(r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		utils.RespondWithError(w, err, http.StatusNotFound)
 		return
 	}
 	password := r.FormValue("password")
@@ -38,31 +39,28 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a Firebase Storage client
 	storageClient, err := app.Storage(context.Background())
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Unable to create Firebase Storage client", http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Get a reference to the Firebase Storage bucket
-	bucket, err := storageClient.Bucket("cloudsharex-b8353.appspot.com")
+	bucket, err := storageClient.Bucket(firebaseBucket)
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Unable to get Firebase Storage bucket", http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Parse the form data to extract the file
-	err = r.ParseMultipartForm(10 << 20) // 10 MB limit for file size
+	err = r.ParseMultipartForm(fileSizeLimit)
 	if err != nil {
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		utils.RespondWithError(w, err, http.StatusBadRequest)
 		return
 	}
 
 	// Get the file from the request
 	file, handler, err := r.FormFile("file")
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Unable to retrieve file", http.StatusBadRequest)
+		utils.RespondWithError(w, err, http.StatusBadRequest)
 		return
 	}
 	defer func(file multipart.File) {
@@ -90,24 +88,22 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Copy the uploaded file's content to Firebase Storage
 	_, err = io.Copy(writer, file)
 	if err != nil {
-		http.Error(w, "Unable to upload the file to Firebase Storage", http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Close the writer
 	err = writer.Close()
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "Unable to close the Firebase Storage writer", http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	fileUUID := uuid.New()
 
-	fileURL, err := file_upload.GetFileURL("cloudsharex-b8353.appspot.com", userRef+handler.Filename)
+	fileURL, err := file_upload.GetFileURL(firebaseBucket, userRef+handler.Filename)
 	if err != nil {
-		log.Print(err)
-		http.Error(w, "Unable to get file URL", http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
@@ -129,8 +125,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	err = fileRepo.Create(context.Background(), &newFileRecord)
 
 	if err != nil {
-		log.Print(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -145,29 +140,25 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
 	decodedU, err := file_upload.DecodeUUID(uuidx)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	file, err := fileRepo.FindByUUID(context.Background(), decodedU)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	err = utils.VerifyPassword(password, file.Password)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusUnauthorized)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	response, err := json.Marshal(file)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -182,16 +173,14 @@ func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 	fileRep := database.NewFileRepository(database.ConnectToMongoDB())
 	files, err := fileRep.FindAllUserFiles(context.Background(), username)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	// Convert files to JSON
 	response, err := json.Marshal(files)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 

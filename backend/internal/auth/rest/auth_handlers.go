@@ -8,18 +8,11 @@ import (
 	"backend/utils"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 )
 
 var userRepo = repository.NewUserRepository()
-
-func respondWithError(w http.ResponseWriter, err error, statusCode int) {
-	log.Println(err)
-	http.Error(w, "", statusCode)
-	w.Write(utils.NewResponse(err, statusCode))
-}
 
 func parseRequestBody(r *http.Request, data interface{}) error {
 	requestBody, err := ioutil.ReadAll(r.Body)
@@ -32,13 +25,13 @@ func parseRequestBody(r *http.Request, data interface{}) error {
 func registerUser(w http.ResponseWriter, registerReq RegisterRequest) {
 	hashedPassword, err := auth.HashPassword(registerReq.Password)
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	err = userRepo.CreateUser(registerReq.Username, registerReq.Email, hashedPassword)
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -49,7 +42,7 @@ func registerUser(w http.ResponseWriter, registerReq RegisterRequest) {
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	var registerReq RegisterRequest
 	if err := parseRequestBody(r, &registerReq); err != nil {
-		respondWithError(w, err, http.StatusBadRequest)
+		utils.RespondWithError(w, err, http.StatusBadRequest)
 		return
 	}
 
@@ -59,30 +52,31 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	cookieCheck, err := r.Cookie("jwt")
 	if err == nil && cookieCheck != nil {
+		http.Error(w, "User Already Logged in", http.StatusConflict)
 		return
 	}
 
 	var loginReq LoginRequest
 	if err := parseRequestBody(r, &loginReq); err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	hashedPassword, err := userRepo.LoginUserCheck(loginReq.Email)
 	if err != nil {
-		respondWithError(w, err, http.StatusNotFound)
+		utils.RespondWithError(w, err, http.StatusNotFound)
 		return
 	}
 
 	err = utils.VerifyPassword(loginReq.Password, hashedPassword)
 	if err != nil {
-		respondWithError(w, err, http.StatusConflict)
+		utils.RespondWithError(w, err, http.StatusConflict)
 		return
 	}
 
 	loggedUser, err := userRepo.GetUserWithEmail(loginReq.Email)
 	if err != nil {
-		respondWithError(w, err, http.StatusUnauthorized)
+		utils.RespondWithError(w, err, http.StatusUnauthorized)
 		return
 	}
 
@@ -113,7 +107,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	responseJSON, err := json.Marshal(response)
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -132,14 +126,14 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := claims.UserID
 	user, err := userRepo.GetUserById(userID)
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	reqUser := RequestedUserData{Email: user.Email, Username: user.Username, CreatedAt: user.CreatedAt}
 	userJSON, err := json.Marshal(reqUser)
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
