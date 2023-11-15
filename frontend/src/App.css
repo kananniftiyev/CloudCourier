@@ -3,12 +3,10 @@
 @tailwind utilities;
 
 body {
-}
-
-body {
   margin: 0;
   padding: 0;
   height: 100%;
+  background: rgb(31 32 32);
 }
 
 .x-logo {
@@ -16,7 +14,7 @@ body {
 }
 
 .button-signup {
-  background-color: #50a8ea !important;
+  background-color: #407edb !important;
 }
 
 .button-signup:hover {
@@ -72,7 +70,8 @@ input[type="file"] {
   flex-direction: row;
 }
 
-body {
+.home {
+  background: rgb(31 32 32);
 }
 
 .left {
@@ -149,7 +148,7 @@ body {
 }
 
 .left-side {
-  background: linear-gradient(to bottom right, #83a4d4, #b6fbff);
+  background: linear-gradient(to bottom right, #9d50bb, #6e48aa);
 }
 
 .login-button {
@@ -169,4 +168,12 @@ body {
 
 .line {
   color: rgba(142, 142, 160) !important;
+}
+
+.x-home {
+  color: #407edb;
+}
+
+.footer-cc {
+  color: rgb(134, 134, 134) !important;
 }

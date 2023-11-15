@@ -4,13 +4,13 @@ import FileDrop from "../components/FileDrop";
 import Footer from "../components/Footer";
 function Home() {
   return (
-    <>
+    <div className="home min-h-screen">
       <Navigation />
       <div className="split md:container md:mx-auto mt-48">
         <FileDrop />
       </div>
       <Footer />
-    </>
+    </div>
   );
 }
 
