@@ -24,6 +24,8 @@ func init() {
 	}
 }
 
+const DatabaseName = "Files-Development"
+
 func ConnectToMongoDB() *mongo.Database {
 	port := os.Getenv("COSMOS_DB_PORT")
 	username := os.Getenv("COSMOS_DB_USERNAME")
@@ -48,6 +50,5 @@ func ConnectToMongoDB() *mongo.Database {
 	}
 
 	// Specify the database and collection you want to work with.
-	databaseName := "Files-Development"
-	return client.Database(databaseName)
+	return client.Database(DatabaseName)
 }
