@@ -195,3 +195,13 @@ input[type="file"] {
 .grey {
   color: #d1d2d3 !important;
 }
+
+.disabled-button {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.disabled-button:hover {
+  background-color: grey;
+  cursor: not-allowed;
+}
