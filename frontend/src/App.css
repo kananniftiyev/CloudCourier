@@ -177,3 +177,21 @@ input[type="file"] {
 .footer-cc {
   color: rgb(134, 134, 134) !important;
 }
+
+.field {
+  padding: 10px 16px !important;
+  border-radius: 5px;
+}
+
+.button-in-login {
+  background-color: #407edb;
+}
+
+.button-in-login:hover {
+  background-color: #2a5697;
+  transition: background-color 0.2s ease;
+}
+
+.grey {
+  color: #d1d2d3 !important;
+}
