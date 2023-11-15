@@ -146,7 +146,6 @@ function FileDrop() {
                   <Typography level="body-lg" className="font-bold">
                     Add Files
                   </Typography>
-                  <Typography level="body-xs">or Select Folder</Typography>
                 </div>
               </div>
             </label>

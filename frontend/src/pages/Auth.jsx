@@ -1,7 +1,18 @@
 import Typography from "@mui/joy/Typography";
 import Button from "@mui/joy/Button";
+import { useNavigate } from "react-router-dom";
 
 function Auth() {
+  const navigate = useNavigate();
+
+  const toLogin = () => {
+    navigate("/auth/login");
+  };
+
+  const toRegister = () => {
+    navigate("/auth/register");
+  };
+
   return (
     <div className="layout grid grid-cols-5 h-screen">
       <div className="left-side col-span-3 px-8 py-5">
@@ -20,10 +31,10 @@ function Auth() {
               Welcome
             </Typography>
             <div className="grid gap-x-3 gap-y-2 sm:grid-cols-2 sm:gap-y-0 w-full">
-              <Button className="login-button" size="lg">
+              <Button className="login-button" size="lg" onClick={toLogin}>
                 Log in
               </Button>
-              <Button className="login-button" size="lg">
+              <Button className="login-button" size="lg" onClick={toRegister}>
                 Sign up
               </Button>
             </div>
