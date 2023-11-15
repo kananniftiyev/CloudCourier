@@ -12,7 +12,7 @@ body {
 }
 
 .x-logo {
-  color: #50a8ea;
+  color: #232323;
 }
 
 .button-signup {
@@ -28,7 +28,8 @@ body {
 }
 
 .logo-main {
-  color: white !important;
+  color: #fffbff !important;
+  text-align: left !important;
 }
 
 footer {
@@ -72,7 +73,6 @@ input[type="file"] {
 }
 
 body {
-  background-color: rgb(20, 26, 31);
 }
 
 .left {
@@ -117,7 +117,7 @@ body {
 }
 
 * {
-  font-family: "Source Sans Pro", sans-serif !important;
+  font-family: "Uncut Sans", sans-serif !important;
 }
 
 .right-upload {
@@ -142,4 +142,31 @@ body {
 .add-files:hover {
   background-color: #eaedf1 !important;
   cursor: pointer;
+}
+
+.right-side {
+  background-color: #0e0f19 !important;
+}
+
+.left-side {
+  background: linear-gradient(to bottom right, #83a4d4, #b6fbff);
+}
+
+.login-button {
+  background-color: #407edb !important;
+  transition: background-color 0.2s ease !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.login-button:hover {
+  background-color: #2a5697 !important;
+}
+
+.Terms {
+  color: rgba(142, 142, 160) !important;
+}
+
+.line {
+  color: rgba(142, 142, 160) !important;
 }
