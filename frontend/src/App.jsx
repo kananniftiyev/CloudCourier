@@ -14,6 +14,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import File from "./pages/File";
+import NotFound from "./pages/NotFound";
 function App() {
   return (
     <Router>
@@ -23,6 +24,9 @@ function App() {
         <Route path="/auth/register" Component={Register} />
         <Route path="/home" Component={Home} />
         <Route path="/file/:uuid" Component={File} />
+
+        {/* Catch-all route for unmatched paths */}
+        <Route path="*" Component={NotFound} />
       </Routes>
     </Router>
   );
