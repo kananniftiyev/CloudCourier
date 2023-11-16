@@ -6,13 +6,15 @@ import (
 )
 
 type File struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty"`
-	UserID     int
-	Username   string
-	FileName   string
-	FilePath   string
-	SpecialURL uuid.UUID
-	ExpiryDate string
-	Password   string `bson:",omitempty"`
-	Title      string
+	ID             primitive.ObjectID `bson:"_id,omitempty"`
+	UserID         int
+	Username       string
+	FileName       string
+	FilePath       string
+	SpecialURL     uuid.UUID
+	ExpiryDate     string
+	Password       string `bson:",omitempty"`
+	Title          string
+	TotalDownloads int
+	UploadDate     string
 }

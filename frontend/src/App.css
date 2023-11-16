@@ -205,3 +205,35 @@ input[type="file"] {
   background-color: grey;
   cursor: not-allowed;
 }
+
+.white {
+  color: white !important;
+}
+
+.divider {
+  width: 65%;
+  height: 1px; /* Adjust the height as needed */
+  background-color: #ffffff4d; /* Adjust the color as needed */
+  margin: 10px 0; /* Adjust the margin as needed */
+}
+
+.file-layout-mid {
+  width: 65%;
+}
+
+.download .icon,
+.download .text {
+  color: #407edb !important;
+}
+
+.download:hover .icon,
+.download:hover .text {
+  color: #2a5697 !important;
+}
+
+.disabled {
+  color: gray;
+  text-decoration: none;
+  cursor: not-allowed;
+  pointer-events: none;
+}
