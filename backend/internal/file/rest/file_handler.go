@@ -111,15 +111,17 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	// Create New Mongo Record
 	fileRepo := database.NewFileRepository(database.ConnectToMongoDB())
 	newFileRecord := database.File{
-		ID:         primitive.ObjectID{},
-		UserID:     userId,
-		Username:   username,
-		FileName:   handler.Filename,
-		FilePath:   fileURL,
-		SpecialURL: fileUUID,
-		ExpiryDate: expirationDateString,
-		Password:   string(hashedPassword),
-		Title:      title,
+		ID:             primitive.ObjectID{},
+		UserID:         userId,
+		Username:       username,
+		FileName:       handler.Filename,
+		FilePath:       fileURL,
+		SpecialURL:     fileUUID,
+		ExpiryDate:     expirationDateString,
+		Password:       string(hashedPassword),
+		Title:          title,
+		TotalDownloads: 0,
+		UploadDate:     time.Now().Format("January 2, 2006"),
 	}
 
 	err = fileRepo.Create(context.Background(), &newFileRecord)
