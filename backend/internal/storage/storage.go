@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-const firebaseBucket = "cloudsharex-b8353.appspot.com"
-
 func StartStorageCheck() {
 	app, err := utils.InitializeFirebase()
 	if err != nil {
@@ -52,7 +50,7 @@ func deleteExpiredFiles(client *storage.Client) error {
 	ctx := context.Background()
 
 	// Get a reference to the Firebase Storage bucket
-	bucket, err := client.Bucket(firebaseBucket)
+	bucket, err := client.Bucket("cloudsharex-b8353.appspot.com")
 	if err != nil {
 		return err
 	}
