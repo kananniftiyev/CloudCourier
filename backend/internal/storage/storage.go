@@ -6,11 +6,19 @@ import (
 	"firebase.google.com/go/storage"
 	"github.com/robfig/cron/v3"
 	"google.golang.org/api/iterator"
+	"gopkg.in/gomail.v2"
 	"log"
 	"time"
 )
 
-const firebaseBucket = "cloudsharex-b8353.appspot.com"
+const (
+	smtpHost       = "your-smtp-host"
+	smtpPort       = 587
+	firebaseBucket = "cloudsharex-b8353.appspot.com"
+	emailFrom      = "cloud"
+	smtpUsername   = "smtp-Username"
+	smtpPassword   = "smtp-password"
+)
 
 func StartStorageCheck() {
 	app, err := utils.InitializeFirebase()
@@ -90,5 +98,23 @@ func deleteExpiredFiles(client *storage.Client) error {
 		}
 	}
 
+	return nil
+}
+
+func sendEmail(deletedFileName string, emailTo string) error {
+	m := gomail.NewMessage()
+	m.SetHeader("From", emailFrom)
+	m.SetHeader("To", emailTo)
+	m.SetHeader("Subject", "File Deleted Notification")
+	m.SetBody("text/plain", "The following file has been deleted: "+deletedFileName)
+
+	d := gomail.NewDialer(smtpHost, smtpPort, smtpUsername, smtpPassword)
+
+	// Send the email
+	if err := d.DialAndSend(m); err != nil {
+		return err
+	}
+
+	log.Println("Email notification sent successfully")
 	return nil
 }
