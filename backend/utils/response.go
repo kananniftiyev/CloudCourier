@@ -12,21 +12,30 @@ type Response struct {
 	StatusCode int    `json:"statusCode"`
 }
 
-func NewResponse(error error, code int) []byte {
-	newResponse := Response{
+func newResponse(error error, code int) *Response {
+	newResponse := &Response{
 		Status:     "error",
 		Message:    error.Error(),
 		StatusCode: code,
 	}
-	js, err := json.Marshal(newResponse)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	return js
+	return newResponse
 }
 
 func RespondWithError(w http.ResponseWriter, err error, statusCode int) {
-	log.Println(err)
-	http.Error(w, "", statusCode)
-	w.Write(NewResponse(err, statusCode))
+	response := newResponse(err, statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+		return
+	}
+}
+
+func RespondWithOkay(w http.ResponseWriter, m any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(m); err != nil {
+		log.Printf("Failed to encode response: %v", err)
+		return
+	}
 }

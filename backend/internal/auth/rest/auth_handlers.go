@@ -82,6 +82,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := auth.CreateNewJWT(loggedUser.ID, loggedUser.Username)
 
+	if err != nil {
+	  utils.RespondWithError(w, err, http.StatusInternalServerError)
+	}
+
 	cookie := &http.Cookie{
 		Name:     "jwt",
 		Value:    token,
@@ -104,16 +108,8 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	response := Message{
 		Message: "Logged out successfully",
 	}
-
-	responseJSON, err := json.Marshal(response)
-	if err != nil {
-		utils.RespondWithError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(responseJSON)
+	
+	utils.RespondWithOkay(w, response)
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
@@ -131,13 +127,6 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reqUser := RequestedUserData{Email: user.Email, Username: user.Username, CreatedAt: user.CreatedAt}
-	userJSON, err := json.Marshal(reqUser)
-	if err != nil {
-		utils.RespondWithError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(userJSON)
+	
+	utils.RespondWithOkay(w, reqUser)
 }
