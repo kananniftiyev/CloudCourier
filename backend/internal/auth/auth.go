@@ -3,13 +3,14 @@ package auth
 import (
 	"backend/utils"
 	"context"
+	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HashPassword(enteredPassword string) (string, error) {
@@ -26,7 +27,7 @@ func VerifyToken(next http.Handler) http.Handler {
 		// Retrieve the JWT token from the cookie
 		cookie, err := r.Cookie("jwt")
 		if err != nil {
-			http.Error(w, "No token provided", http.StatusForbidden)
+			utils.RespondWithError(w, err, http.StatusForbidden)
 			return
 		}
 
@@ -36,21 +37,19 @@ func VerifyToken(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			http.Error(w, "Failed to authenticate token", http.StatusUnauthorized)
+			utils.RespondWithError(w, err, http.StatusUnauthorized)
 			return
 		}
 
 		if !token.Valid {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
-			log.Printf("JWT token is not valid")
+			utils.RespondWithError(w, err, http.StatusUnauthorized)
 			return
 		}
 
 		claims, ok := token.Claims.(*utils.CustomClaims)
 
 		if !ok {
-			http.Error(w, "Failed to get token claims", http.StatusUnauthorized)
-			log.Printf("Failed to get custom claims from JWT token", err)
+			utils.RespondWithError(w, errors.New("failed to get token claims"), http.StatusForbidden)
 			return
 		}
 		ctx := context.WithValue(r.Context(), "claims", claims)
