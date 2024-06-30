@@ -6,13 +6,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
+	"sync"
 
 	"github.com/joho/godotenv"
-	"gorm.io/driver/sqlserver"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+// TODO: Remove init
 func init() {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -29,16 +30,22 @@ func init() {
 	db.Commit()
 }
 
+var databaseInstance *gorm.DB
+var databaseLock sync.Mutex
+
 func ConnectDatabase() *gorm.DB {
-	var port = os.Getenv("DB_PORT")
-	portInt, err := strconv.Atoi(port)
-	if err != nil {
-		panic("Failed to convert port to an integer")
+	if databaseInstance == nil{
+		databaseLock.Lock()
+		defer databaseLock.Unlock()
+		var port = os.Getenv("DB_PORT")
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
+		os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"), port)	
+		databaseInstance, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			panic("Failed to Connect to Database")
+		}
+		return databaseInstance
 	}
-	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=%s", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), portInt, os.Getenv("DB_NAME"))
-	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Failed to Connect to Database")
-	}
-	return db
+	
+	return databaseInstance
 }

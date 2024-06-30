@@ -1,3 +1,3 @@
-module github.com/kananniftiyev/safedispatch/backend/pkg
+module github.com/kananniftiyev/cloudcourier/backend/pkg
 
 go 1.22.3

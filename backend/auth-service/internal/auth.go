@@ -1,3 +1,4 @@
+// Package auth provides authentication and authorization functionalities.
 package auth
 
 import (
@@ -13,6 +14,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// HashPassword generates a bcrypt hash from the provided password string.
 func HashPassword(enteredPassword string) (string, error) {
 	cost := 14
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(enteredPassword), cost)
@@ -22,6 +24,7 @@ func HashPassword(enteredPassword string) (string, error) {
 	return string(hashedPassword), nil
 }
 
+// JWTTokenVerifyMiddleware is a middleware function for verifying JWT tokens
 func JWTTokenVerifyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Retrieve the JWT token from the cookie
@@ -57,6 +60,7 @@ func JWTTokenVerifyMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// CreateNewJWT generates a new JWT token with custom claims including user ID,
 func CreateNewJWT(ID uint, username string) (string, error) {
 	// Convert the SECRET_KEY string to a byte array
 	key := []byte(common.SECRET_KEY)

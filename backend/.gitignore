@@ -2,3 +2,4 @@ internal/file/rest/cloudsharex-b8353-firebase-adminsdk-rtbmn-c36203b30a.json
 firebase-x.json
 cmd/auth/.env
 cmd/file/.env
+.env
