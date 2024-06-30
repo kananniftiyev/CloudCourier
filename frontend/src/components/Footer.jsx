@@ -8,7 +8,7 @@ function Footer() {
         <div className="content flex justify-between">
           <div className="left-foot">
             <Typography className="footer-cc">
-              2023 CloudShareX. Warsaw. Poland
+              2023 CloudCourier. Warsaw. Poland
             </Typography>
           </div>
           <div className="right-foot flex items-center gap-4">

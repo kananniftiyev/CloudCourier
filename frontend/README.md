@@ -1,4 +1,4 @@
-<h1 align="center">CloudShareX - Frontend</h1>
+<h1 align="center">CloudCourier 📦 - Frontend</h1>
 
 ## Table of Content:
 
@@ -28,7 +28,7 @@ Explore these remarkable features to enhance your frontend project experience!
 
 ## 🎨 UI Component Library
 
-**CloudShareX** is built with the help of the [Mui Joy UI](https://github.com/muijoy/mui-joy) component library. This library provides a rich set of UI components and styles that enhance the visual appeal and functionality of the project's user interface.
+**CloudCourier 📦** is built with the help of the [Mui Joy UI](https://github.com/muijoy/mui-joy) component library. This library provides a rich set of UI components and styles that enhance the visual appeal and functionality of the project's user interface.
 
 Some of the key benefits of using Mui Joy UI include:
 

@@ -1,6 +1,9 @@
 package rest
 
 import (
+	"encoding/json"
+	"io"
+	"net/http"
 	"time"
 )
 
@@ -23,4 +26,12 @@ type RequestedUserData struct {
 	CreatedAt time.Time `json:"createdAt"`
 	Username  string    `json:"username"`
 	Email     string    `json:"email"`
+}
+
+func parseRequestBody(r *http.Request, data interface{}) error {
+	requestBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(requestBody, data)
 }

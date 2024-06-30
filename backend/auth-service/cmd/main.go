@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	figure.NewFigure("CloudShareX", "slant", true).Print()
+	figure.NewFigure("CloudCourier", "slant", true).Print()
 	log.Println("Auth service is starting...")
 	rest.AuthStart()
 }

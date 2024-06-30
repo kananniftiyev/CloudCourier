@@ -4,12 +4,13 @@ import (
 	"backend/auth-service/internal/database"
 	"backend/auth-service/internal/database/models"
 	"errors"
+	"log"
+	"sync"
 	"time"
 
 	"gorm.io/gorm"
 )
 
-// TODO: put erros into one file.
 var (
 	ErrUserNotFound      = errors.New("user not found")
 	ErrUserAlreadyExists = errors.New("user already exists")
@@ -20,11 +21,18 @@ type UserRepository struct {
 	db *gorm.DB
 }
 
-// TODO: Singelton Pattern.
+var (
+    userRepositoryInstance *UserRepository
+    userRepositoryOnce     sync.Once
+)
+
 func NewUserRepository() *UserRepository {
-	return &UserRepository{
-		db: database.ConnectDatabase(),
-	}
+    userRepositoryOnce.Do(func() {
+        userRepositoryInstance = &UserRepository{
+            db: database.ConnectDatabase(),
+        }
+    })
+    return userRepositoryInstance
 }
 
 func (ur *UserRepository) CreateUser(username, email, hashedPassword string) error {
@@ -34,6 +42,7 @@ func (ur *UserRepository) CreateUser(username, email, hashedPassword string) err
 
 	newUser := models.User{Username: username, Email: email, PasswordHash: hashedPassword, RegistrationDate: time.Now()}
 	if err := ur.db.Create(&newUser).Error; err != nil {
+		log.Println(err)
 		return ErrDatabaseOperation
 	}
 	return nil
@@ -59,7 +68,10 @@ func (ur *UserRepository) GetUserWithEmail(email string) (models.User, error) {
 
 func (ur *UserRepository) userExists(email, username string) bool {
 	var user models.User
-	ur.db.Where("email = ? OR username = ?", email, username).First(&user)
+	err := ur.db.Where("email = ? OR username = ?", email, username).First(&user)
+	if err != nil {
+	  return true
+	}
 	if user.ID == 0 {
 		return false
 	}

@@ -6,28 +6,25 @@ import (
 	"backend/auth-service/common"
 	auth "backend/auth-service/internal"
 	"backend/auth-service/internal/database/repository"
-	"encoding/json"
-	"io"
 	"net/http"
 	"time"
 )
 
-// TODO: merge 2 snall register funcs to 1.
 // TODO: fix perfomance.
 // TODO: create gRPC if needed.
 // TODO: Reformat code
 
 var userRepo = repository.NewUserRepository()
 
-func parseRequestBody(r *http.Request, data interface{}) error {
-	requestBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(requestBody, data)
-}
 
-func registerUser(w http.ResponseWriter, registerReq RegisterRequest) {
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+
+	var registerReq RegisterRequest
+	if err := parseRequestBody(r, &registerReq); err != nil {
+		common.RespondWithError(w, err, http.StatusBadRequest)
+		return
+	}
+
 	hashedPassword, err := auth.HashPassword(registerReq.Password)
 	if err != nil {
 		common.RespondWithError(w, err, http.StatusInternalServerError)
@@ -35,6 +32,11 @@ func registerUser(w http.ResponseWriter, registerReq RegisterRequest) {
 	}
 
 	err = userRepo.CreateUser(registerReq.Username, registerReq.Email, hashedPassword)
+
+	if err == repository.ErrUserAlreadyExists{
+		common.RespondWithError(w, err, http.StatusConflict)
+		return
+	}
 	if err != nil {
 		common.RespondWithError(w, err, http.StatusInternalServerError)
 		return
@@ -44,17 +46,8 @@ func registerUser(w http.ResponseWriter, registerReq RegisterRequest) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	var registerReq RegisterRequest
-	if err := parseRequestBody(r, &registerReq); err != nil {
-		common.RespondWithError(w, err, http.StatusBadRequest)
-		return
-	}
-
-	registerUser(w, registerReq)
-}
-
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+
 	cookieCheck, err := r.Cookie("jwt")
 	if err == nil && cookieCheck != nil {
 		http.Error(w, "User Already Logged in", http.StatusConflict)
@@ -119,6 +112,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
+
 	claims, ok := r.Context().Value("claims").(*common.CustomClaims)
 	if !ok {
 		http.Error(w, "Failed to get user claims", http.StatusUnauthorized)

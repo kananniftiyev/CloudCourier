@@ -1,8 +1,8 @@
-# CloudShareX - Backend 🚀
+# CloudCourier 📦 - Backend
 
 ---
 
-Welcome to the CloudShareX Backend, where the magic happens! 🧙‍♂️
+Welcome to the CloudCourier Backend, where the magic happens! 🧙‍♂️
 
 - [Technologies Utilized](#technologies-utilized)
 - [Services](#services)
@@ -32,6 +32,7 @@ These technologies, combined, empower the project to deliver a robust and scalab
 ### 🔒 Auth Service
 
 The Auth Service is responsible for managing user authentication. It provides the following functionality:
+
 - Creation of user accounts.
 - User sign-in and authentication.
 - Retrieving user information.
@@ -39,6 +40,7 @@ The Auth Service is responsible for managing user authentication. It provides th
 ### 📂 File Service
 
 The File Service is responsible for managing files, including uploading, retrieving, and tracking file history. It offers the following features:
+
 - File upload and storage.
 - Retrieval of uploaded files.
 - File upload history tracking.
@@ -48,6 +50,7 @@ The File Service is responsible for managing files, including uploading, retriev
 ### 📧 Email Service
 
 The Email Service handles sending email notifications for various events, including:
+
 - Account creation notifications.
 - File expiration alerts.
 - And more.
@@ -55,6 +58,7 @@ The Email Service handles sending email notifications for various events, includ
 ### ☁️ Storage Service
 
 The Storage Service periodically checks Firebase Storage to manage and clean up expired files. It performs the following tasks:
+
 - Scans Firebase Storage for expired files.
 - Deletes expired files to free up storage space. 🗑️
 
@@ -63,15 +67,19 @@ The Storage Service periodically checks Firebase Storage to manage and clean up 
 ### Installation
 
 - Clone this Repository
+
 ```bash
-git clone https://github.com/kananniftiyev/CloudShareX
+git clone https://github.com/kananniftiyev/CloudCourier
 ```
+
 - Move into project folder
+
 ```bash
 cd YOUR_PROJECT_DIR
 ```
 
 - Run **run_script.bat** file in **cmd** folder to start all services at the same time.
+
 ```bash
 .\run_services.bat
 ```
