@@ -7,6 +7,7 @@ require (
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	go.mongodb.org/mongo-driver v1.16.0

@@ -1,14 +1,10 @@
 package file_upload
 
 import (
-	"backend/file-service/common"
 	"backend/file-service/internal/database"
 	"context"
 	"encoding/base64"
-	"log"
-	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 )
 
@@ -42,35 +38,6 @@ func GetFileURL(bucketName, objectName string) (string, error) {
 
 	// Return the file's download URL
 	return fileURL.MediaLink, nil
-}
-
-func GetUserFromJWT(r *http.Request) (int, string, error) {
-	cookie, err := r.Cookie("jwt")
-	if err != nil {
-		log.Print(err)
-		return 0, "", err
-	}
-	customClaims := &common.CustomClaims{}
-
-	token, err := jwt.ParseWithClaims(cookie.Value, customClaims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(common.SECRET_KEY), nil
-	})
-
-	if err != nil {
-		log.Print(err)
-		return 0, "", err
-	}
-
-	if !token.Valid {
-		log.Println(err)
-		return 0, "", err
-	}
-	claims, ok := token.Claims.(*common.CustomClaims)
-	if !ok {
-		log.Printf("Failed to get custom claims from JWT token", err)
-		return 0, "", err
-	}
-	return int(claims.UserID), claims.Username, nil
 }
 
 func DecodeUUID(base64UUID string) (uuid.UUID, error) {
