@@ -3,11 +3,12 @@
 package rest
 
 import (
-	"backend/auth-service/common"
 	auth "backend/auth-service/internal"
 	"backend/auth-service/internal/database/repository"
 	"net/http"
 	"time"
+
+	"github.com/kananniftiyev/cloudcourier-lib/shared"
 )
 
 // TODO: fix perfomance.
@@ -21,24 +22,24 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	var registerReq RegisterRequest
 	if err := parseRequestBody(r, &registerReq); err != nil {
-		common.RespondWithError(w, err, http.StatusBadRequest)
+		shared.RespondWithError(w, err, http.StatusBadRequest)
 		return
 	}
 
 	hashedPassword, err := auth.HashPassword(registerReq.Password)
 	if err != nil {
-		common.RespondWithError(w, err, http.StatusInternalServerError)
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	err = userRepo.CreateUser(registerReq.Username, registerReq.Email, hashedPassword)
 
 	if err == repository.ErrUserAlreadyExists{
-		common.RespondWithError(w, err, http.StatusConflict)
+		shared.RespondWithError(w, err, http.StatusConflict)
 		return
 	}
 	if err != nil {
-		common.RespondWithError(w, err, http.StatusInternalServerError)
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -56,32 +57,32 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var loginReq LoginRequest
 	if err := parseRequestBody(r, &loginReq); err != nil {
-		common.RespondWithError(w, err, http.StatusInternalServerError)
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	hashedPassword, err := userRepo.LoginUserCheck(loginReq.Email)
 	if err != nil {
-		common.RespondWithError(w, err, http.StatusNotFound)
+		shared.RespondWithError(w, err, http.StatusNotFound)
 		return
 	}
 
-	err = common.VerifyPassword(loginReq.Password, hashedPassword)
+	err = shared.VerifyPassword(loginReq.Password, hashedPassword)
 	if err != nil {
-		common.RespondWithError(w, err, http.StatusConflict)
+		shared.RespondWithError(w, err, http.StatusConflict)
 		return
 	}
 
 	loggedUser, err := userRepo.GetUserWithEmail(loginReq.Email)
 	if err != nil {
-		common.RespondWithError(w, err, http.StatusUnauthorized)
+		shared.RespondWithError(w, err, http.StatusUnauthorized)
 		return
 	}
 
 	token, err := auth.CreateNewJWT(loggedUser.ID, loggedUser.Username)
 
 	if err != nil {
-	  common.RespondWithError(w, err, http.StatusInternalServerError)
+	  shared.RespondWithError(w, err, http.StatusInternalServerError)
 	  return
 	}
 
@@ -108,12 +109,12 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Message: "Logged out successfully",
 	}
 	
-	common.RespondWithOkay(w, response)
+	shared.RespondWithOkay(w, response)
 }
 
 func UserHandler(w http.ResponseWriter, r *http.Request) {
 
-	claims, ok := r.Context().Value("claims").(*common.CustomClaims)
+	claims, ok := r.Context().Value("claims").(*shared.CustomClaims)
 	if !ok {
 		http.Error(w, "Failed to get user claims", http.StatusUnauthorized)
 		return
@@ -122,11 +123,11 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	userID := claims.UserID
 	user, err := userRepo.GetUserById(userID)
 	if err != nil {
-		common.RespondWithError(w, err, http.StatusInternalServerError)
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
 	reqUser := RequestedUserData{Email: user.Email, Username: user.Username, CreatedAt: user.CreatedAt}
 	
-	common.RespondWithOkay(w, reqUser)
+	shared.RespondWithOkay(w, reqUser)
 }

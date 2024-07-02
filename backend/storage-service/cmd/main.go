@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	figure.NewFigure("CloudCourier 📦", "slant", true).Print()
+	figure.NewFigure("CloudCourier", "slant", true).Print()
 	log.Println("Storage service is starting...")
 	storage.StartStorageCheck()
 }
