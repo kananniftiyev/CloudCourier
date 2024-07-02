@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	figure.NewFigure("CloudCourier 📦", "slant", true).Print()
+	figure.NewFigure("CloudCourier", "slant", true).Print()
 	log.Println("File service is starting...")
 	rest.FileStart()
 
