@@ -6,7 +6,7 @@ import (
 )
 
 func InitializeRoutes(r *chi.Mux) {
-	r.Route("api/auth", func(r chi.Router) {
+	r.Route("/api/auth", func(r chi.Router) {
 		r.Post("/register", RegisterHandler)
 		r.Post("/login", LoginHandler)
 		r.With(shared.JWTTokenVerifyMiddleware).Post("/logout", LogoutHandler)
