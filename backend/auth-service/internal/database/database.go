@@ -3,30 +3,18 @@ package database
 import (
 	"backend/auth-service/internal/database/models"
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
 	"sync"
 
-	"github.com/joho/godotenv"
+	"github.com/kananniftiyev/cloudcourier-lib/shared"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 // TODO: Remove init
 func init() {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	newDir := filepath.Join(dir, "..")
-	log.Println(newDir)
+	shared.LoadEnv()
 
-	envFile := filepath.Join(newDir, ".env")
-	err = godotenv.Load(envFile)
-	if err != nil {
-		log.Fatal(err)
-	}
 	db := ConnectDatabase()
 	db.AutoMigrate(&models.User{})
 	db.Commit()

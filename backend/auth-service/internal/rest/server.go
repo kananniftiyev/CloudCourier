@@ -5,28 +5,16 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/joho/godotenv"
+	"github.com/kananniftiyev/cloudcourier-lib/shared"
 	"golang.org/x/net/http2"
 )
 
 // TODO: Rate Limit
 func AuthStart() {
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	newDir := filepath.Join(dir, "..")
-	log.Println(newDir)
-	envFile := filepath.Join(newDir, ".env")
-	err = godotenv.Load(envFile)
-
-	if err != nil {
-		panic(err)
-	}
+	shared.LoadEnv()
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
