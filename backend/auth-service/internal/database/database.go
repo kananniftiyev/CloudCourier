@@ -19,8 +19,10 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	newDir := filepath.Join(dir, "..")
+	log.Println(newDir)
 
-	envFile := filepath.Join(dir, ".env")
+	envFile := filepath.Join(newDir, ".env")
 	err = godotenv.Load(envFile)
 	if err != nil {
 		log.Fatal(err)

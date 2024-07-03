@@ -4,17 +4,30 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 	"golang.org/x/net/http2"
 )
 
-var keyPath = "C:\\Users\\kanan\\Documents\\GitHub\\CloudShareX\\backend\\auth-service\\private.key"
-var cerPath = "C:\\Users\\kanan\\Documents\\GitHub\\CloudShareX\\backend\\auth-service\\certificate.pem"
-
 // TODO: Rate Limit
 func AuthStart() {
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	newDir := filepath.Join(dir, "..")
+	log.Println(newDir)
+	envFile := filepath.Join(newDir, ".env")
+	err = godotenv.Load(envFile)
+
+	if err != nil {
+		panic(err)
+	}
+
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
@@ -25,7 +38,7 @@ func AuthStart() {
 
 	
 	// Load TLS certificates
-	cert, err := tls.LoadX509KeyPair(cerPath, keyPath)
+	cert, err := tls.LoadX509KeyPair(os.Getenv("PEM_FILE_PATH"), os.Getenv("KEY_FILE_PATH"))
 	if err != nil {
 		log.Fatalf("Error loading certificate: %v", err)
 	}
