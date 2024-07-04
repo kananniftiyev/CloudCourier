@@ -20,6 +20,8 @@ func AuthStart() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.CleanPath)
+	// Debug || Profiler
+	router.Mount("/debug", middleware.Profiler())
 
 
 	InitializeRoutes(router)

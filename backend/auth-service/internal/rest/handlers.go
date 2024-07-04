@@ -12,7 +12,6 @@ import (
 )
 
 // TODO: fix perfomance.
-// TODO: create gRPC if needed.
 // TODO: Reformat code
 
 var userRepo = repository.NewUserRepository()
