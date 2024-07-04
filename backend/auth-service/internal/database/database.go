@@ -23,6 +23,7 @@ func init() {
 var databaseInstance *gorm.DB
 var databaseLock sync.Mutex
 
+// TODO: Check database connection pool
 func ConnectDatabase() *gorm.DB {
 	if databaseInstance == nil{
 		databaseLock.Lock()

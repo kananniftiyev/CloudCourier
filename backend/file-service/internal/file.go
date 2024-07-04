@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// TODO: Fix jwt.
 
 func GetFileURL(bucketName, objectName string) (string, error) {
 	app, err := database.InitializeFirebase()
