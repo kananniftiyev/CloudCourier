@@ -5,14 +5,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 	"github.com/kananniftiyev/cloudcourier-lib/shared"
 	"golang.org/x/net/http2"
 )
 
-// TODO: Rate Limit
 func AuthStart() {
 	shared.LoadEnv()
 
@@ -20,13 +21,15 @@ func AuthStart() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.CleanPath)
+
+	// Rate limited by IP for 50 request per minute.
+	router.Use(httprate.LimitByIP(50, 1*time.Minute))
+
 	// Debug || Profiler
 	router.Mount("/debug", middleware.Profiler())
 
-
 	InitializeRoutes(router)
 
-	
 	// Load TLS certificates
 	cert, err := tls.LoadX509KeyPair(os.Getenv("PEM_FILE_PATH"), os.Getenv("KEY_FILE_PATH"))
 	if err != nil {
@@ -56,5 +59,5 @@ func AuthStart() {
 	if err != nil {
 		log.Fatalf("Error starting HTTP/2 server: %v", err)
 	}
-	
+
 }

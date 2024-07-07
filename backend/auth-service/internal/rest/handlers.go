@@ -11,11 +11,10 @@ import (
 	"github.com/kananniftiyev/cloudcourier-lib/shared"
 )
 
-// TODO: fix perfomance.
+// FIXME: fix perfomance.
 // TODO: Reformat code
 
 var userRepo = repository.NewUserRepository()
-
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -33,7 +32,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = userRepo.CreateUser(registerReq.Username, registerReq.Email, hashedPassword)
 
-	if err == repository.ErrUserAlreadyExists{
+	if err == repository.ErrUserAlreadyExists {
 		shared.RespondWithError(w, err, http.StatusConflict)
 		return
 	}
@@ -81,8 +80,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	token, err := auth.CreateNewJWT(loggedUser.ID, loggedUser.Username)
 
 	if err != nil {
-	  shared.RespondWithError(w, err, http.StatusInternalServerError)
-	  return
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	cookie := &http.Cookie{
@@ -107,7 +106,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	response := Message{
 		Message: "Logged out successfully",
 	}
-	
+
 	shared.RespondWithOkay(w, response)
 }
 
@@ -127,6 +126,6 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reqUser := RequestedUserData{Email: user.Email, Username: user.Username, CreatedAt: user.CreatedAt}
-	
+
 	shared.RespondWithOkay(w, reqUser)
 }
