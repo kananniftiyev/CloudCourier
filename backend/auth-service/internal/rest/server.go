@@ -15,6 +15,7 @@ import (
 )
 
 func AuthStart() {
+	// FIXME: Therea are 2 LoadEnv, one in server and database init().
 	shared.LoadEnv()
 
 	router := chi.NewRouter()
