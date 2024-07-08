@@ -54,12 +54,12 @@ func AuthStart() {
 	http2.ConfigureServer(server, &http2.Server{})
 
 	// Log the server start information
-	log.Printf("Starting HTTP/2 server on %s", server.Addr)
+	log.Printf("Starting Auth Service server on %s", server.Addr)
 
 	// Start the HTTP/2 server
 	err = server.ListenAndServeTLS("", "")
 	if err != nil {
-		log.Fatalf("Error starting HTTP/2 server: %v", err)
+		log.Fatalf("Error starting Auth Service server: %v", err)
 	}
 
 }

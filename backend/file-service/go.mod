@@ -2,6 +2,8 @@ module backend/file-service
 
 go 1.22.3
 
+toolchain go1.22.5
+
 require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
@@ -15,6 +17,8 @@ require (
 	google.golang.org/api v0.186.0
 )
 
+require github.com/cespare/xxhash/v2 v2.2.0 // indirect
+
 require (
 	cloud.google.com/go v0.115.0 // indirect
 	cloud.google.com/go/auth v0.6.0 // indirect
@@ -25,6 +29,7 @@ require (
 	cloud.google.com/go/longrunning v0.5.7 // indirect
 	cloud.google.com/go/storage v1.42.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/go-chi/httprate v0.9.0
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -33,7 +38,7 @@ require (
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.5 // indirect
-	github.com/kananniftiyev/cloudcourier-lib v0.0.0-20240702113425-b2103127d3ce // indirect
+	github.com/kananniftiyev/cloudcourier-lib v0.1.0
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect

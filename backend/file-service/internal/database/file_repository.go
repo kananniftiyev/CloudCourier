@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -12,6 +13,7 @@ type FileRepository struct {
 	collection *mongo.Collection
 }
 
+// TODO: Dynamic Collection name
 func NewFileRepository(db *mongo.Database) *FileRepository {
 	return &FileRepository{
 		collection: db.Collection("Files"),

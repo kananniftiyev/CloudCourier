@@ -26,6 +26,7 @@ func CreateNewJWT(ID uint, username string) (string, error) {
 	// Convert the SECRET_KEY string to a byte array
 	key := []byte(shared.SECRET_KEY)
 
+	// Create custom claim.
 	claims := shared.CustomClaims{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    strconv.Itoa(int(ID)),
