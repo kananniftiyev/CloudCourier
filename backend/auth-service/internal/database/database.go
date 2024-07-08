@@ -6,15 +6,11 @@ import (
 	"os"
 	"sync"
 
-	"github.com/kananniftiyev/cloudcourier-lib/shared"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-// TODO: Remove init
-func init() {
-	shared.LoadEnv()
-
+func InitUserScheme() {
 	db := ConnectDatabase()
 	db.AutoMigrate(&models.User{})
 	db.Commit()
