@@ -26,7 +26,7 @@ func CreateNewJWT(ID uint, username string) (string, error) {
 	// Convert the SECRET_KEY string to a byte array
 	key := []byte(shared.SECRET_KEY)
 
-	claimsS := shared.CustomClaims{
+	claims := shared.CustomClaims{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    strconv.Itoa(int(ID)),
 			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
@@ -35,13 +35,15 @@ func CreateNewJWT(ID uint, username string) (string, error) {
 		Username: username,
 	}
 
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, claimsS)
+	// Create token struct with signing method and claims we gave.
+	tokenStruct := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	token, err := claims.SignedString(key)
+	// Sign token and turn into string
+	tokenString, err := tokenStruct.SignedString(key)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
-	return token, nil
+	return tokenString, nil
 }

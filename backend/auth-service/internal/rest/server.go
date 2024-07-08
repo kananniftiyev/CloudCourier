@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"backend/auth-service/internal/database"
 	"crypto/tls"
 	"log"
 	"net/http"
@@ -15,8 +16,8 @@ import (
 )
 
 func AuthStart() {
-	// FIXME: Therea are 2 LoadEnv, one in server and database init().
 	shared.LoadEnv()
+	database.InitUserScheme()
 
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
