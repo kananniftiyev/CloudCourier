@@ -3,19 +3,29 @@ package database
 import (
 	"context"
 	"log"
+	"os"
+	"sync"
 
 	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"
 )
 
-func InitializeFirebase() (*firebase.App, error) {
-	opt := option.WithCredentialsFile("C:\\Users\\kenan\\Documents\\GitHub\\CloudShareX\\backend\\firebase-x.json") // Replace with your Firebase Admin SDK credentials file
+var firebaseAppInstance *firebase.App
+var firebaseAppLock sync.Mutex
 
-	app, err := firebase.NewApp(context.Background(), nil, opt)
-	if err != nil {
-		log.Fatalf("Error initializing Firebase: %v", err)
-		return nil, err
+func InitializeFirebase() (*firebase.App, error) {
+	if firebaseAppInstance == nil {
+		firebaseAppLock.Lock()
+		defer firebaseAppLock.Unlock()
+		opt := option.WithCredentialsFile(os.Getenv("FIREBASE_JSON"))
+
+		app, err := firebase.NewApp(context.Background(), nil, opt)
+		if err != nil {
+			log.Fatalf("Error initializing Firebase: %v", err)
+			return nil, err
+		}
+		firebaseAppInstance = app
 	}
 
-	return app, nil
+	return firebaseAppInstance, nil
 }

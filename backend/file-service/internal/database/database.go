@@ -3,52 +3,45 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"os"
-	"path/filepath"
+	"sync"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func init() {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	envFile := filepath.Join(dir, ".env")
-	err = godotenv.Load(envFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-const DatabaseName = "Files-Development"
+var mongoDBInstance *mongo.Database
+var mongoDBLock sync.Mutex
 
 func ConnectToMongoDB() *mongo.Database {
-	port := os.Getenv("COSMOS_DB_PORT")
-	username := os.Getenv("COSMOS_DB_USERNAME")
-	password := os.Getenv("COSMOS_DB_PP")
-	host := os.Getenv("COSMOS_DB_HOST")
-	if username == "" || password == "" || host == "" || port == "" {
-		log.Fatal("One or more Cosmos DB environment variables are empty or missing.")
+	if mongoDBInstance == nil {
+		mongoDBLock.Lock()
+		defer mongoDBLock.Unlock()
+		port := os.Getenv("MONGO_DB_PORT")
+		username := os.Getenv("MONGO_DB_USERNAME")
+		password := os.Getenv("MONGO_DB_PASWORD")
+		host := os.Getenv("MONGO_DB_HOST")
+		if username == "" || password == "" || host == "" || port == "" {
+			log.Fatal("One or more Mongo DB environment variables are empty or missing.")
+		}
+
+		uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/?ssl=true&retrywrites=false", username, password, host, port)
+
+		client, err := mongo.NewClient(options.Client().ApplyURI(uri))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		ctx := context.Background()
+
+		err = client.Connect(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		mongoDBInstance = client.Database(os.Getenv("MONGO_DB_DATABASE_NAME"))
 	}
 
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/?ssl=true&retrywrites=false", username, password, host, port)
-
-	client, err := mongo.NewClient(options.Client().ApplyURI(uri))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ctx := context.Background()
-
-	err = client.Connect(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Specify the database and collection you want to work with.
-	return client.Database(DatabaseName)
+	return mongoDBInstance
 }

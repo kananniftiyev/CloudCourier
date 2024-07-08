@@ -5,6 +5,7 @@ import (
 	"backend/file-service/internal/database"
 	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -16,14 +17,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// TODO: Refactor Code.
 const (
 	firebaseBucket = "cloudsharex-b8353.appspot.com"
 	fileSizeLimit  = 50 * 1024 * 1024
 )
 
-
-// Todo: Write code to check if there are file with same name if yes then do not let them do it.
-// Todo: Last Changes
+// TODO: Write code to check if there are file with same name if yes then do not let them do it.
+// TODO: Last Changes
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("claims").(*shared.CustomClaims)
 	if !ok {
@@ -32,12 +33,12 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	userId := claims.UserID
 	username := claims.Username
-	
+
 	password := r.FormValue("password")
 	title := r.FormValue("title")
 	app, err := database.InitializeFirebase()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -179,11 +180,11 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(response)
 }
 
-// FileUploadHistory TODO: implement with front end.
+// TODO: FileUploadHistory  implement with front end.
 func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("claims").(*shared.CustomClaims)
 	if !ok {
-		http.Error(w, "Failed to get user claims", http.StatusUnauthorized)
+		shared.RespondWithError(w, errors.New("Failed to get user claims"), http.StatusUnauthorized)
 		return
 	}
 	username := claims.Username
