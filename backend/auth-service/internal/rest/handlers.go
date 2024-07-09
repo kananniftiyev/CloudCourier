@@ -11,7 +11,6 @@ import (
 	"github.com/kananniftiyev/cloudcourier-lib/shared"
 )
 
-// FIXME: fix perfomance.
 // TODO: Reformat code
 
 var userRepo = repository.NewUserRepository()

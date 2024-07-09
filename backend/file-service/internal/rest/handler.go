@@ -9,6 +9,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,12 +20,12 @@ import (
 
 // TODO: Refactor Code.
 const (
-	firebaseBucket = "cloudsharex-b8353.appspot.com"
-	fileSizeLimit  = 50 * 1024 * 1024
+	fileSizeLimit = 50 * 1024 * 1024
 )
 
+var firebaseBucket = os.Getenv("FIREBASE_BUCKET_LINK")
+
 // TODO: Write code to check if there are file with same name if yes then do not let them do it.
-// TODO: Last Changes
 func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("claims").(*shared.CustomClaims)
 	if !ok {
@@ -145,8 +146,17 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 
+	if err = json.NewEncoder(w).Encode(map[string]string{
+		"status":  "201",
+		"message": "File Uploaded Successfuly",
+	}); err != nil {
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
+		return
+	}
+
 }
 
+// TODO: Add code to increase amount of download number of file.
 func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	uuidx := r.FormValue("uuid")
 	password := r.FormValue("password")
@@ -169,22 +179,15 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := json.Marshal(file)
-	if err != nil {
-		shared.RespondWithError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
+	// TODO: Check this
+	shared.RespondWithOkay(w, file)
 }
 
 // TODO: FileUploadHistory  implement with front end.
 func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("claims").(*shared.CustomClaims)
 	if !ok {
-		shared.RespondWithError(w, errors.New("Failed to get user claims"), http.StatusUnauthorized)
+		shared.RespondWithError(w, errors.New("failed to get user claims"), http.StatusUnauthorized)
 		return
 	}
 	username := claims.Username
@@ -195,16 +198,6 @@ func FileUploadHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Convert files to JSON
-	response, err := json.Marshal(files)
-	if err != nil {
-		shared.RespondWithError(w, err, http.StatusInternalServerError)
-		return
-	}
-
-	// Set response headers and write JSON response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
+	shared.RespondWithOkay(w, files)
 
 }

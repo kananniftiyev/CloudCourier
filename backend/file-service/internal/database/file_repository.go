@@ -13,7 +13,6 @@ type FileRepository struct {
 	collection *mongo.Collection
 }
 
-// TODO: Dynamic Collection name
 func NewFileRepository(db *mongo.Database) *FileRepository {
 	return &FileRepository{
 		collection: db.Collection("Files"),
