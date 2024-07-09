@@ -14,9 +14,6 @@ import (
 	"golang.org/x/net/http2"
 )
 
-// TODO: Add Rate limit
-// TODO: Add Http 2
-
 func FileServiceStart() {
 	shared.LoadEnv()
 	router := chi.NewRouter()

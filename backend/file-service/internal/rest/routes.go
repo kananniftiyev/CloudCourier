@@ -11,6 +11,5 @@ func InitializeRoutes(r *chi.Mux) {
 		r.With(shared.JWTTokenVerifyMiddleware).Get("/retrieve", FileRetrieveHandler)
 		r.With(shared.JWTTokenVerifyMiddleware).Get("/history", FileUploadHistory)
 	})
-	
 
 }
