@@ -15,6 +15,9 @@ var (
 	firebaseLock     sync.Mutex
 )
 
+// InitializeFirebase initializes the Firebase App instance and returns it.
+// If the Firebase App instance is already initialized, it returns the existing instance.
+// It uses the Firebase Admin SDK credentials file specified in the FIREBASE_JSON environment variable.
 func InitializeFirebase() (*firebase.App, error) {
 	if firebaseInstance == nil {
 		firebaseLock.Lock()
