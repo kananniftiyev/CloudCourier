@@ -3,3 +3,4 @@ firebase-x.json
 cmd/auth/.env
 cmd/file/.env
 .env
+vendor

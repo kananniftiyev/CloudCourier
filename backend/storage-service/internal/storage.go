@@ -3,14 +3,17 @@ package storage
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"firebase.google.com/go/storage"
+	"github.com/kananniftiyev/cloudcourier-lib/shared"
 	"github.com/robfig/cron/v3"
 	"google.golang.org/api/iterator"
 )
 
 func StartStorageCheck() {
+	shared.LoadEnv()
 	app, err := InitializeFirebase()
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +53,7 @@ func deleteExpiredFiles(client *storage.Client) error {
 	ctx := context.Background()
 
 	// Get a reference to the Firebase Storage bucket
-	bucket, err := client.Bucket("cloudsharex-b8353.appspot.com")
+	bucket, err := client.Bucket(os.Getenv("FIREBASE_BUCKET"))
 	if err != nil {
 		return err
 	}
