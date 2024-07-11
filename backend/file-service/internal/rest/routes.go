@@ -8,7 +8,7 @@ import (
 func InitializeRoutes(r *chi.Mux) {
 	r.Route("api/file", func(r chi.Router) {
 		r.With(shared.JWTTokenVerifyMiddleware).Post("/upload", FileUploadHandler)
-		r.With(shared.JWTTokenVerifyMiddleware).Get("/retrieve", FileRetrieveHandler)
+		r.Get("/retrieve", FileRetrieveHandler)
 		r.With(shared.JWTTokenVerifyMiddleware).Get("/history", FileUploadHistory)
 	})
 
