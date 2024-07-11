@@ -4,16 +4,19 @@
 
 Welcome to the CloudCourier Backend, where the magic happens! 🧙‍♂️
 
-- [Technologies Utilized](#technologies-utilized)
-- [Services](#services)
-  - [🔒 Auth Service](#auth-service)
-  - [📂 File Service](#file-service)
-  - [📧 Email Service](#email-service)
-  - [☁️ Storage Service](#storage-service)
-- [Getting Started](#getting-started)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
-- [API Documentation](#api-documentation)
+- [CloudCourier 📦 - Backend](#cloudcourier----backend)
+  - [Technologies Utilized](#technologies-utilized)
+  - [Services](#services)
+    - [🔒 Auth Service](#-auth-service)
+    - [📂 File Service](#-file-service)
+    - [📧 Email Service](#-email-service)
+    - [☁️ Storage Service](#️-storage-service)
+  - [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [Configuration](#configuration)
+    - [1. Firebase Credentials](#1-firebase-credentials)
+    - [2. Database Settings](#2-database-settings)
+  - [API Documentation](#api-documentation)
 
 ## Technologies Utilized
 
@@ -72,16 +75,16 @@ The Storage Service periodically checks Firebase Storage to manage and clean up 
 git clone https://github.com/kananniftiyev/CloudCourier
 ```
 
-- Move into project folder
+- Move into service folder which you wanna run.
 
 ```bash
-cd YOUR_PROJECT_DIR
+cd SERVICE_DIR
 ```
 
-- Run **run_script.bat** file in **cmd** folder to start all services at the same time.
+- Run **main.go** file in **cmd** folder to start service.
 
 ```bash
-.\run_services.bat
+go run main.go
 ```
 
 ### Configuration
@@ -92,12 +95,12 @@ Before you begin working on this project, it's important to perform some initial
 
 **Location:** `backend` folder
 
-1. Place your Firebase credentials file in the `backend` folder.
-2. Update the file path to your Firebase credentials in the `utils/firebase.go` file to ensure proper authentication and access to Firebase services.
+1. Place your Firebase credentials file in the `` folder.
+2. Update the file path to your Firebase credentials in the `.env` file to ensure proper authentication and access to Firebase services.
 
 ### 2. Database Settings
 
-In each service's respective database folder, make sure to configure the following settings:
+In each service's respective folder, make sure to configure the following settings in .env file:
 
 - **Port**: Set the correct port for the database.
 - **User**: Provide the username required for accessing the database.

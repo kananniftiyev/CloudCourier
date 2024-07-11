@@ -8,7 +8,6 @@ The project is organized into the following directories:
 
 - **Database**: Manages the database operations for user data.
 - **Rest**: Contains the REST API handlers and routes for authentication.
-- **Docs**: Documentation (not included in this Markdown file).
 - **Tests**: Reserved for testing, but you can extend it as needed.
 
 ## 🗃 Database Models
@@ -29,27 +28,27 @@ The **ConnectDatabase** function establishes the database connection using envir
 
 ### Register User 📝
 
-- **POST /auth/register**
+- **POST api/auth/register**
   - 📝 Description: Register a new user.
   - 📦 Parameters: JSON request with username, email, and password.
   - 📬 Returns: JSON response.
 
 ### Login User 🔐
 
-- **POST /auth/login**
+- **POST api/auth/login**
   - 📝 Description: Authenticate and log in a user.
   - 📦 Parameters: JSON request with email and password.
   - 📬 Returns: JSON response and a JWT token.
 
 ### Logout User 🚪
 
-- **POST /auth/logout**
+- **POST api/auth/logout**
   - 📝 Description: Log out the authenticated user.
   - 📬 Returns: JSON response.
 
 ### Get User Data 📧
 
-- **GET /auth/user**
+- **GET api/auth/user**
   - 📝 Description: Retrieve user data.
   - 📦 Requires: JWT token for authentication.
   - 📬 Returns: JSON response with user information.
