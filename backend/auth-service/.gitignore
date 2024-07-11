@@ -1,3 +1,4 @@
 .env
 certificate.pem
 private.key
+vendor
