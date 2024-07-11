@@ -53,7 +53,11 @@ func deleteExpiredFiles(client *storage.Client) error {
 	ctx := context.Background()
 
 	// Get a reference to the Firebase Storage bucket
-	bucket, err := client.Bucket(os.Getenv("FIREBASE_BUCKET"))
+	firebaseBucket := os.Getenv("FIREBASE_BUCKET")
+	if firebaseBucket == "" {
+		log.Fatal("FIREBASE_BUCKET environment variable is not set")
+	}
+	bucket, err := client.Bucket(firebaseBucket)
 	if err != nil {
 		return err
 	}
@@ -72,7 +76,8 @@ func deleteExpiredFiles(client *storage.Client) error {
 		}
 
 		// Fetch object metadata
-		expiryDateString, ok := objAttrs.Metadata["expiry_date"]
+		const expiryDateKey = "expiry_date"
+		expiryDateString, ok := objAttrs.Metadata[expiryDateKey]
 		if !ok {
 			continue // Skip objects without an expiry date
 		}

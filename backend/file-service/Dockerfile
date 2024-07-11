@@ -12,15 +12,9 @@ COPY go.sum .
 
 RUN go mod download
 
-COPY cmd/file cmd/file
-COPY internal/file internal/file
-COPY utils utils
-COPY docs docs
-COPY .env .env
-COPY firebase-x.json firebase.json
+COPY . .
 
-
-RUN go build -o main ./cmd/auth
+RUN go build -o main ./cmd
 
 EXPOSE 8080
 

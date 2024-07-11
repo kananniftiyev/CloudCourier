@@ -21,7 +21,9 @@ func HashPassword(enteredPassword string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-// CreateNewJWT generates a new JWT token with custom claims including user ID,
+// CreateNewJWT generates a new JSON Web Token (JWT) with the provided user ID and username.
+// It takes the user ID as an unsigned integer and the username as a string.
+// The function returns the generated token as a string and an error if any occurred.
 func CreateNewJWT(ID uint, username string) (string, error) {
 	// Convert the SECRET_KEY string to a byte array
 	key := []byte(shared.SECRET_KEY)
