@@ -32,11 +32,16 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get user claims", http.StatusUnauthorized)
 		return
 	}
+
+	ctx := context.Background()
+
 	userId := claims.UserID
 	username := claims.Username
 
+	// TODO: Add check for empty
 	password := r.FormValue("password")
 	title := r.FormValue("title")
+
 	app, err := database.InitializeFirebase()
 	if err != nil {
 		shared.RespondWithError(w, err, http.StatusInternalServerError)
@@ -44,7 +49,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create a Firebase Storage client
-	storageClient, err := app.Storage(context.Background())
+	storageClient, err := app.Storage(ctx)
 	if err != nil {
 		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
@@ -84,7 +89,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 	fileRef := bucket.Object(userRef + handler.Filename)
 
 	// Create a writer for the Firebase Storage object
-	writer := fileRef.NewWriter(context.Background())
+	writer := fileRef.NewWriter(ctx)
 
 	expDate := time.Now().Add(6 * time.Hour)
 	expirationDateString := expDate.Format(time.RFC3339)
@@ -109,11 +114,14 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	fileUUID := uuid.New()
 
-	fileURL, err := file_upload.GetFileURL(firebaseBucket, userRef+handler.Filename)
+	fileURLObj, err := fileRef.Attrs(ctx)
 	if err != nil {
 		shared.RespondWithError(w, err, http.StatusInternalServerError)
 		return
 	}
+
+	fileURL := fileURLObj.MediaLink
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		shared.RespondWithError(w, err, http.StatusInternalServerError)
@@ -136,7 +144,7 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 		UploadDate:     time.Now().Format("January 2, 2006"),
 	}
 
-	err = fileRepo.Create(context.Background(), &newFileRecord)
+	err = fileRepo.Create(ctx, &newFileRecord)
 
 	if err != nil {
 		shared.RespondWithError(w, err, http.StatusInternalServerError)
@@ -156,7 +164,6 @@ func FileUploadHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// TODO: Add code to increase amount of download number of file.
 func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 	uuidx := r.FormValue("uuid")
 	password := r.FormValue("password")
