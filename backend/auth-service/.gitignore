@@ -2,3 +2,4 @@
 certificate.pem
 private.key
 vendor
+csr.csr

@@ -45,7 +45,7 @@ func AuthStart() {
 
 	// HTTP server configuration
 	server := &http.Server{
-		Addr:      ":8081",
+		Addr:      ":8080",
 		Handler:   router,
 		TLSConfig: tlsConfig,
 	}
