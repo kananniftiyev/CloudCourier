@@ -71,3 +71,13 @@ func (r *FileRepository) FindAllUserFiles(ctx context.Context, username string) 
 
 	return files, nil
 }
+
+func (r *FileRepository) UpdateTotalDownloads(ctx context.Context, id primitive.ObjectID, totalDownloads int) error {
+	update := bson.M{
+		"$set": bson.M{
+			"totaldownloads": totalDownloads,
+		},
+	}
+	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": id}, update)
+	return err
+}
