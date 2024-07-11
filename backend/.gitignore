@@ -4,3 +4,4 @@ cmd/auth/.env
 cmd/file/.env
 .env
 vendor
+firebase.json

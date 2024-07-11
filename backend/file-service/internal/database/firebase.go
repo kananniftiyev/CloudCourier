@@ -13,6 +13,7 @@ import (
 var firebaseAppInstance *firebase.App
 var firebaseAppLock sync.Mutex
 
+// TODO: Move firebase to Shared-lib
 func InitializeFirebase() (*firebase.App, error) {
 	if firebaseAppInstance == nil {
 		firebaseAppLock.Lock()
