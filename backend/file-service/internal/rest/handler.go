@@ -179,6 +179,15 @@ func FileRetrieveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	file.TotalDownloads++
+
+	err = fileRepo.UpdateTotalDownloads(context.Background(), file.ID, file.TotalDownloads)
+
+	if err != nil {
+		shared.RespondWithError(w, err, http.StatusInternalServerError)
+		return
+	}
+
 	// TODO: Check this
 	shared.RespondWithOkay(w, file)
 }
